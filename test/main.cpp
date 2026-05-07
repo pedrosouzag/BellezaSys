@@ -1,28 +1,27 @@
 #include <cassert>
+#include <iostream>
+
 #include "../src/bib.hpp"
 
+using namespace std;
 
-int main () {
-    Cliente cliente;
-    Pedido pedido, pedido2;
+int main()
+{
+    Cliente cliente("Pedro", "Rua teste");
 
-    cliente.nome = "Pedro";
-    cliente.endereco = "Rua teste";
+    Pedido pedido("Camisa Santos", 130.00, true);
 
-    pedido.produto = "Camisa Santos";
-    pedido.valor = 130.00;
-    pedido.pagamentoAprovado = true;
-
-    pedido2.produto = "Camisa Santos";
-    pedido2.valor = 130.00;
-    pedido2.pagamentoAprovado = false;
+    Pedido pedido2("Camisa Santos", 130.00, false);
 
     assert(dispararVenda(cliente, pedido) == true);
+
     assert(dispararVenda(cliente, pedido2) == false);
-    //assert(dispararVenda(cliente, pedido2) == true); // teste pra nao passar
+
+    // assert(dispararVenda(cliente, pedido2) == true); // teste para nao passar
+
+    setarRastreio(pedido, "BR123456789");
+
+    assert(pedido.getRastreio() == "BR123456789");
 
     return 0;
-
 }
-
-

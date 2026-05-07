@@ -1,17 +1,14 @@
 #include "bib.hpp"
 
-int main () {
-    Cliente cliente;
-    Pedido pedido;
+int main()
+{
+    Cliente cliente("Pedro", "Rua teste");
 
-    cliente.nome = "Pedro";
-    cliente.endereco = "Rua teste";
-
-    pedido.produto = "Camisa Santos";
-    pedido.valor = 130.00;
-    pedido.pagamentoAprovado = true;
+    Pedido pedido("Camisa Santos", 130.00, true);
 
     dispararVenda(cliente, pedido);
-    return 0;
 
+    setarRastreio(pedido, "BR123456789");
+
+    return 0;
 }
