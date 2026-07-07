@@ -1,0 +1,13 @@
+<map id="bellezasys::UsuarioHandle::papel" name="bellezasys::UsuarioHandle::papel">
+<area shape="rect" id="Node000001" title=" " alt="" coords="543,72,721,115"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_unit___usuario.html#ad4a07977221d4f629e213e4527ce9bb7" title=" " alt="" coords="323,5,490,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="540,67,481,51,482,46,546,67"/>
+<area shape="rect" id="Node000005" href="$classbellezasys_1_1_usuario_handle.html#a5d865d1c7a2fa931e4789749dce1c4af" title=" " alt="" coords="318,72,495,115"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="526,94,496,96,496,91,531,93"/>
+<area shape="rect" id="Node000006" href="$classbellezasys_1_1_usuario_handle.html#abcc90c62bbc6475495347758a1c9233d" title=" " alt="" coords="318,139,495,181"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="546,119,482,141,481,135,541,120"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_unit___usuario.html#a1c02da6652dc752cdd9a4d900c675d44" title=" " alt="" coords="103,5,270,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="305,27,271,29,270,24,310,26"/>
+<area shape="rect" id="Node000004" href="$test_2unit_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,13,55,40"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="85,28,56,29,54,24,89,25"/>
+</map>
