@@ -1,0 +1,15 @@
+<map id="bellezasys::AgendamentoHandle::cancelar" name="bellezasys::AgendamentoHandle::cancelar">
+<area shape="rect" id="Node000001" title=" " alt="" coords="603,72,816,115"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_unit___agendamento.html#a6bcc50f6eac23ff44676283393e3570a" title=" " alt="" coords="353,5,555,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="608,68,538,51,539,46,613,67"/>
+<area shape="rect" id="Node000005" href="$classbellezasys_1_1_unit___agendamento.html#a9c9f9a3ad73bb06e8af5779213a1af97" title=" " alt="" coords="353,72,555,115"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="585,94,556,96,556,91,590,93"/>
+<area shape="rect" id="Node000006" href="$classbellezasys_1_1_unit___agendamento.html#af77ea1a0aa51f71b947498c777d93da9" title=" " alt="" coords="353,139,555,181"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="613,119,539,141,538,135,608,120"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_unit___agendamento.html#a130157991e4f7f210ddd8ac20ea3f686" title=" " alt="" coords="103,72,305,115"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="355,53,287,74,286,69,360,52"/>
+<area shape="rect" id="Node000004" href="$test_2unit_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,80,55,107"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="85,95,56,96,54,91,89,92"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="335,94,306,96,305,91,340,93"/>
+<area shape="poly" id="edge7_Node000006_Node000003" title=" " alt="" coords="354,134,286,118,287,113,360,134"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="bellezasys::ServicoHandle" name="bellezasys::ServicoHandle">
+<area shape="rect" id="Node000001" title=" " alt="" coords="21,853,192,1179"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_servico.html" title=" " alt="" coords="5,521,176,804"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,816,102,854,97,853,98,821"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_handle.html" title=" " alt="" coords="201,599,322,727"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="229,738,180,855,175,852,227,743"/>
+<area shape="rect" id="Node000004" href="$classbellezasys_1_1_servico_body.html" title="classe Body responsavel por guardar os dados reais de um Servico" alt="" coords="184,252,339,449"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="262,446,264,582,259,581,261,452"/>
+<area shape="rect" id="Node000005" href="$classbellezasys_1_1_body.html" title=" " alt="" coords="206,5,317,203"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="262,215,264,252,259,252,261,220"/>
+</map>

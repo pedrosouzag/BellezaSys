@@ -1,0 +1,9 @@
+<map id="bellezasys::BellezaSystemHandle::cadastrarUsuario" name="bellezasys::BellezaSystemHandle::cadastrarUsuario">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,72,185,115"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#ae8ad277e17da7dc5e664303401be65df" title=" " alt="" coords="233,5,412,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,69,235,52,230,54,171,74"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_usuario.html#a13a05fad243f4fb3fb04dbd894904742" title=" " alt="" coords="254,72,390,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="185,91,241,93,236,94,185,96"/>
+<area shape="rect" id="Node000004" href="$classbellezasys_1_1_usuario.html#a38fe8a6d8a0c66683cb2e1db0efb8049" title=" " alt="" coords="245,139,400,165"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="180,113,256,134,250,135,180,118"/>
+</map>
