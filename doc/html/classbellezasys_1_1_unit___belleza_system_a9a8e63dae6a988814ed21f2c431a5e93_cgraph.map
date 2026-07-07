@@ -1,0 +1,14 @@
+<map id="bellezasys::Unit_BellezaSystem::unit_BellezaSystem_login" name="bellezasys::Unit_BellezaSystem::unit_BellezaSystem_login">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,105,230,148"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system.html#a7bae2566d0213ec5c8b45cda5e8a2242" title=" " alt="" coords="278,5,457,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,102,277,58,295,53,290,55,279,62,171,107"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system.html#a35fc2a41dc59dd8e3b8046d15b5dfd9a" title="metodo de fabrica: cria, registra e retorna um novo BellezaSystemHandle" alt="" coords="278,72,457,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="229,109,265,106,260,108,231,114"/>
+<area shape="rect" id="Node000005" href="$classbellezasys_1_1_belleza_system.html#a8541b401fcc31ce0e38518c37b2177e6" title=" " alt="" coords="278,139,457,181"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="230,139,265,146,260,147,230,144"/>
+<area shape="rect" id="Node000006" href="$classbellezasys_1_1_belleza_system.html#aeb1f586bda926b04cb9096a736449bf3" title="confere email e senha contra os usuarios cadastrados" alt="" coords="278,205,457,248"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="170,146,279,191,295,199,290,199,277,196,169,151"/>
+<area shape="rect" id="Node000004" href="$classbellezasys_1_1_belleza_system.html#aae01459aa54cf238a9b7807e11f6dfdd" title=" " alt="" coords="505,72,684,115"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="457,91,492,93,487,94,458,96"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="552,70,550,62,557,53,572,47,595,45,619,48,635,56,630,56,618,53,595,51,573,53,560,57,555,63,556,73"/>
+</map>

@@ -1,0 +1,50 @@
+<map id="bellezasys::Unit_Usuario::run_unit_tests_Usuario" name="bellezasys::Unit_Usuario::run_unit_tests_Usuario">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,375,173,418"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_unit___usuario.html#a40ace14ba20bc27ee2c4cab7d4020936" title=" " alt="" coords="243,24,425,67"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,374,105,320,129,246,166,167,190,130,219,96,253,72,250,77,222,100,195,133,171,170,134,248,110,321,97,375"/>
+<area shape="rect" id="Node000006" href="$classbellezasys_1_1_unit___usuario.html#a986d9ceec0da6d970e6cd09426a2c3a2" title=" " alt="" coords="221,342,447,384"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="172,383,207,379,203,382,174,387"/>
+<area shape="rect" id="Node000007" href="$classbellezasys_1_1_unit___usuario.html#acbc7dbbf44669b0ba8f05112764103c7" title=" " alt="" coords="500,91,667,134"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="92,374,105,325,128,261,145,228,166,196,190,168,219,144,250,126,283,113,352,97,421,92,487,96,482,99,421,98,353,102,284,118,252,131,222,148,194,171,170,199,150,231,133,263,110,326,97,375"/>
+<area shape="rect" id="Node000008" href="$classbellezasys_1_1_unit___usuario.html#a9642ef02f3de27bdf89f0d7461f60534" title=" " alt="" coords="245,408,422,451"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="172,405,232,414,228,417,174,410"/>
+<area shape="rect" id="Node000009" href="$classbellezasys_1_1_unit___usuario.html#a8238a11cfbe6f60e97e394cd4dd74e9c" title=" " alt="" coords="231,475,436,518"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="128,416,222,461,241,469,236,471,220,466,129,421"/>
+<area shape="rect" id="Node000010" href="$classbellezasys_1_1_unit___usuario.html#a02d80423ea27d2564f15bca0ebe1c8da" title=" " alt="" coords="226,542,442,584"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="106,416,155,472,187,502,222,528,232,534,227,535,219,532,183,506,151,476,106,421"/>
+<area shape="rect" id="Node000011" href="$classbellezasys_1_1_unit___usuario.html#aa6516b5c695230d650280fc8347c17c1" title=" " alt="" coords="250,608,418,651"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="98,416,118,455,144,503,179,552,222,594,239,606,233,606,219,599,175,556,139,506,113,458,98,421"/>
+<area shape="rect" id="Node000012" href="$classbellezasys_1_1_unit___usuario.html#ad4a07977221d4f629e213e4527ce9bb7" title=" " alt="" coords="500,224,667,267"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="102,373,148,314,181,284,220,261,286,239,355,228,423,226,487,230,482,233,423,231,356,234,287,244,222,266,185,288,152,318,106,376"/>
+<area shape="rect" id="Node000017" href="$classbellezasys_1_1_unit___usuario.html#a75c66b2489c390ad42c67b06898f6fdb" title="confere a gestao de memoria dos objetos Handle e Body de Usuario" alt="" coords="233,675,435,718"/>
+<area shape="poly" id="edge19_Node000001_Node000017" title=" " alt="" coords="95,416,111,468,135,534,171,602,195,634,222,661,227,666,222,666,219,665,191,637,167,605,130,536,106,470,95,421"/>
+<area shape="rect" id="Node000018" href="$classbellezasys_1_1_unit___usuario.html#a35cb54d7d4d86247651f4fa1a6f6426b" title=" " alt="" coords="250,158,418,200"/>
+<area shape="poly" id="edge20_Node000001_Node000018" title=" " alt="" coords="98,374,144,298,178,255,219,217,241,206,237,210,222,221,182,258,148,301,103,376"/>
+<area shape="rect" id="Node000020" href="$classbellezasys_1_1_unit___usuario.html#a1676efc10cc2c09e0a176744d205dc79" title=" " alt="" coords="250,275,418,318"/>
+<area shape="poly" id="edge23_Node000001_Node000020" title=" " alt="" coords="126,373,220,327,240,321,236,325,222,332,130,377"/>
+<area shape="rect" id="Node000022" href="$classbellezasys_1_1_unit___usuario.html#addccfffc39b7a21a2c5de16ec0017f4c" title=" " alt="" coords="221,742,446,784"/>
+<area shape="poly" id="edge26_Node000001_Node000022" title=" " alt="" coords="93,416,105,479,126,563,143,608,164,651,190,692,223,728,226,733,221,732,219,732,186,695,159,654,138,610,121,564,99,480,92,421"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_usuario_handle.html#ab1003e54a1cbbe1c04f233c65215975b" title="troca a senha, exigindo a senha atual correta" alt="" coords="495,24,672,67"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="424,43,482,44,477,47,427,48"/>
+<area shape="rect" id="Node000004" href="$classbellezasys_1_1_usuario_handle.html#a236baa9ace629bbc25b8863b185434b5" title="confere se a senha informada bate com a senha cadastrada" alt="" coords="729,30,907,72"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="423,22,495,10,584,3,673,10,738,24,733,26,672,15,584,8,495,15,426,26"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="672,45,716,48,711,50,674,50"/>
+<area shape="rect" id="Node000005" href="$classbellezasys_1_1_usuario_handle.html#a6555bfa6a56faaadef4a12753e01102a" title="indica se o usuario tem um id valido (foi realmente cadastrado)" alt="" coords="964,99,1141,142"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="892,70,966,94,961,95,893,76"/>
+<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="667,88,721,76,717,78,669,93"/>
+<area shape="poly" id="edge16_Node000012_Node000005" title=" " alt="" coords="667,223,915,161,972,146,967,148,916,166,669,228"/>
+<area shape="rect" id="Node000013" href="$classbellezasys_1_1_usuario_handle.html#a085c339da1ea1e93ad7d14317298fb10" title=" " alt="" coords="729,108,907,151"/>
+<area shape="poly" id="edge14_Node000012_Node000013" title=" " alt="" coords="649,222,671,210,695,189,719,168,743,157,739,160,722,172,698,193,674,215,652,226"/>
+<area shape="rect" id="Node000014" href="$classbellezasys_1_1_usuario_handle.html#a1dc49e2fce135d59dd08fed0b445864f" title=" " alt="" coords="720,226,916,252"/>
+<area shape="poly" id="edge15_Node000012_Node000014" title=" " alt="" coords="667,241,707,241,702,243,669,246"/>
+<area shape="rect" id="Node000015" href="$classbellezasys_1_1_usuario_handle.html#a7ad6712f41a5768fd55e0a5fa4b4bf67" title=" " alt="" coords="729,343,907,386"/>
+<area shape="poly" id="edge17_Node000012_Node000015" title=" " alt="" coords="615,265,665,297,722,329,736,337,730,337,719,334,662,302,615,270"/>
+<area shape="rect" id="Node000016" href="$classbellezasys_1_1_usuario_handle.html#a1ff18809914dc99788290b13dea4756d" title=" " alt="" coords="729,276,907,319"/>
+<area shape="poly" id="edge18_Node000012_Node000016" title=" " alt="" coords="668,262,717,274,712,275,668,267"/>
+<area shape="rect" id="Node000019" href="$classbellezasys_1_1_usuario_handle.html#a860e30d653ab843246fd375a765b9d46" title=" " alt="" coords="495,158,672,200"/>
+<area shape="poly" id="edge21_Node000018_Node000019" title=" " alt="" coords="417,177,482,178,477,180,419,182"/>
+<area shape="poly" id="edge22_Node000019_Node000013" title=" " alt="" coords="671,158,716,150,712,153,674,163"/>
+<area shape="rect" id="Node000021" href="$classbellezasys_1_1_usuario_handle.html#afc6e267f9aea572ccd51f2b7f8e1e816" title=" " alt="" coords="495,326,672,368"/>
+<area shape="poly" id="edge24_Node000020_Node000021" title=" " alt="" coords="418,311,482,325,477,327,419,316"/>
+<area shape="poly" id="edge25_Node000021_Node000015" title=" " alt="" coords="672,351,717,356,712,358,673,356"/>
+</map>
