@@ -1,7 +1,0 @@
-<map id="bellezasys::BellezaSystemHandle::cadastrarServico" name="bellezasys::BellezaSystemHandle::cadastrarServico">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,35,185,77"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#ae8ad277e17da7dc5e664303401be65df" title=" " alt="" coords="233,5,412,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="185,42,220,40,215,41,186,47"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_servico.html#ae021e49785e5563a9891f1f2d4b254d4" title=" " alt="" coords="246,72,399,99"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="185,65,233,73,227,74,185,70"/>
-</map>

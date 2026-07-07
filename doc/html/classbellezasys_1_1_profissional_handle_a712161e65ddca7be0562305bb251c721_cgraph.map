@@ -1,7 +1,0 @@
-<map id="bellezasys::ProfissionalHandle::estaNoExpediente" name="bellezasys::ProfissionalHandle::estaNoExpediente">
-<area shape="rect" id="Node000001" title="confere se o intervalo (inicio + duracao) cabe dentro do expediente" alt="" coords="5,23,183,65"/>
-<area shape="rect" id="Node000002" href="$namespacebellezasys.html#aad76e67a299ccb53745e52bc2b4aa627" title="retorna a hora (0&#45;23) de um DateTime no horario local" alt="" coords="236,5,382,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="183,31,224,28,218,30,184,36"/>
-<area shape="rect" id="Node000003" href="$namespacebellezasys.html#a15ea92058f5ed22ae86bf561d24d02f1" title="retorna o minuto (0&#45;59) de um DateTime no horario local" alt="" coords="231,56,388,83"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="183,52,218,58,213,58,183,57"/>
-</map>

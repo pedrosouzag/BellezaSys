@@ -1,9 +1,0 @@
-<map id="bellezasys::ServicoHandle::isValid" name="bellezasys::ServicoHandle::isValid">
-<area shape="rect" id="Node000001" title=" " alt="" coords="531,5,708,48"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_unit___servico.html#a48d24fa43a723f828e04e064cb12bfd9" title=" " alt="" coords="317,5,483,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="513,27,484,29,484,24,519,27"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_unit___servico.html#a71c280a76f88c5f6765461d29fbc1574" title=" " alt="" coords="103,5,269,48"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="299,27,269,29,269,24,304,27"/>
-<area shape="rect" id="Node000004" href="$test_2unit_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,13,55,40"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="84,28,55,29,55,24,89,26"/>
-</map>

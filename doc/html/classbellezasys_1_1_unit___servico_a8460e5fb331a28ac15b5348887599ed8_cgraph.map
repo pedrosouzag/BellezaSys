@@ -1,7 +1,0 @@
-<map id="bellezasys::Unit_Servico::unit_Servico_setPercentualComissao" name="bellezasys::Unit_Servico::unit_Servico_setPercentualComissao">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,253,48"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_servico_handle.html#a8e80f48d47b67b64721c6a55dd26d376" title=" " alt="" coords="301,5,477,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="253,24,288,27,282,27,253,29"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_servico_handle.html#a72a24e595bde387f8489ff161d4b7691" title="percentual (0 a 1) que o profissional recebe de comissao sobre o preco" alt="" coords="525,5,701,48"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="477,24,512,27,507,27,477,29"/>
-</map>

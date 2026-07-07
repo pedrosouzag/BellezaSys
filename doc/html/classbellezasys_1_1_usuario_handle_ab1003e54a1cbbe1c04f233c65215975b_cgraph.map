@@ -1,7 +1,0 @@
-<map id="bellezasys::UsuarioHandle::alterarSenha" name="bellezasys::UsuarioHandle::alterarSenha">
-<area shape="rect" id="Node000001" title="troca a senha, exigindo a senha atual correta" alt="" coords="5,5,183,48"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_usuario_handle.html#a236baa9ace629bbc25b8863b185434b5" title="confere se a senha informada bate com a senha cadastrada" alt="" coords="231,5,408,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="183,24,218,26,212,27,183,29"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_usuario_handle.html#a6555bfa6a56faaadef4a12753e01102a" title="indica se o usuario tem um id valido (foi realmente cadastrado)" alt="" coords="456,5,633,48"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="408,24,443,27,438,27,408,29"/>
-</map>

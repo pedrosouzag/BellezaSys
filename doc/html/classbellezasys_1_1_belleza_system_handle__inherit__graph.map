@@ -1,7 +1,0 @@
-<map id="bellezasys::BellezaSystemHandle" name="bellezasys::BellezaSystemHandle">
-<area shape="rect" id="Node000001" title=" " alt="" coords="97,496,266,896"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system.html" title=" " alt="" coords="5,5,174,448"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="136,460,145,496,140,496,136,465"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_handle.html" title=" " alt="" coords="199,163,351,291"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="261,303,224,497,219,496,258,308"/>
-</map>

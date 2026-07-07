@@ -1,9 +1,0 @@
-<map id="bellezasys::Servico::duracao" name="bellezasys::Servico::duracao">
-<area shape="rect" id="Node000001" title=" " alt="" coords="240,72,375,115"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#ad8ec3a3344e1608ced71c93ff5f41aee" title=" " alt="" coords="9,5,188,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="222,68,168,51,168,46,227,66"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system_body.html#a5e740e9f37569f5b10b6e6cf130d4172" title=" " alt="" coords="5,72,192,115"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="221,94,193,96,192,91,227,93"/>
-<area shape="rect" id="Node000004" href="$classbellezasys_1_1_servico.html#aca682b084931cff12bf897f932bd95ff" title=" " alt="" coords="31,139,166,181"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="227,119,168,141,166,136,222,120"/>
-</map>

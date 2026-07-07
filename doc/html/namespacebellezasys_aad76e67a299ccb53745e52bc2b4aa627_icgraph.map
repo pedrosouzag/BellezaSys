@@ -1,5 +1,0 @@
-<map id="bellezasys::localHour" name="bellezasys::localHour">
-<area shape="rect" id="Node000001" title="retorna a hora (0&#45;23) de um DateTime no horario local" alt="" coords="231,13,377,40"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_profissional_handle.html#a712161e65ddca7be0562305bb251c721" title="confere se o intervalo (inicio + duracao) cabe dentro do expediente" alt="" coords="5,5,183,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,27,183,29,183,24,218,26"/>
-</map>

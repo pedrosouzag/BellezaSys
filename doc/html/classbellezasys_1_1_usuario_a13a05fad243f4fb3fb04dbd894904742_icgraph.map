@@ -1,9 +1,0 @@
-<map id="bellezasys::Usuario::email" name="bellezasys::Usuario::email">
-<area shape="rect" id="Node000001" title=" " alt="" coords="233,72,369,115"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#a18ec051c852fa03c59d4b9b647dc504c" title=" " alt="" coords="5,5,185,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="216,68,163,51,163,46,221,66"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system_handle.html#ad3a451fbe007b8eefe7f854b15e57fd8" title="confere email e senha contra os usuarios cadastrados" alt="" coords="5,72,185,115"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="215,94,186,96,185,91,220,93"/>
-<area shape="rect" id="Node000004" href="$classbellezasys_1_1_usuario.html#afc76b7567a3226d2a707a4b10c8f3901" title=" " alt="" coords="27,139,163,181"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="221,119,164,141,163,135,216,121"/>
-</map>

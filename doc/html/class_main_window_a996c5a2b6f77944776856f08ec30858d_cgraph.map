@@ -1,8 +1,0 @@
-<map id="MainWindow::MainWindow" name="MainWindow::MainWindow">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,37,185,64"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system.html#a35fc2a41dc59dd8e3b8046d15b5dfd9a" title="metodo de fabrica: cria, registra e retorna um novo BellezaSystemHandle" alt="" coords="233,29,412,72"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="185,48,220,50,214,51,185,53"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system.html#aae01459aa54cf238a9b7807e11f6dfdd" title=" " alt="" coords="460,29,639,72"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="412,48,447,51,442,51,413,53"/>
-<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="507,27,505,19,512,10,527,5,550,3,574,5,590,14,585,13,573,10,550,8,528,10,515,15,510,21,511,30"/>
-</map>

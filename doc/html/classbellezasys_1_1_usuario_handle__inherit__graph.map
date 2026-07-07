@@ -1,7 +1,0 @@
-<map id="bellezasys::UsuarioHandle" name="bellezasys::UsuarioHandle">
-<area shape="rect" id="Node000001" title=" " alt="" coords="58,315,225,619"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_usuario.html" title=" " alt="" coords="5,5,131,267"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,279,111,315,105,315,100,284"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_handle.html" title=" " alt="" coords="155,72,277,200"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="200,212,178,316,173,314,197,217"/>
-</map>
