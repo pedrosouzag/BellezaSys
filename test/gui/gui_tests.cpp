@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <QComboBox>
 #include <QDateTimeEdit>
+#include <QFile>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -29,6 +30,11 @@ namespace {
 constexpr int TELA_LOGIN = 0;
 constexpr int TELA_CLIENTE = 1;
 constexpr int TELA_ADMIN = 2;
+
+void limparDadosPersistidos()
+{
+    QFile::remove("data/bellezasys.db");
+}
 
 // agenda o fechamento automatico do QMessageBox de aviso que a janela
 // mostra quando o core recusa uma acao (senao o dialogo modal travaria o
@@ -150,6 +156,7 @@ private:
 
 void GuiTests::init()
 {
+    limparDadosPersistidos();
     janela_ = new MainWindow();
     janela_->show();
 }
@@ -158,6 +165,7 @@ void GuiTests::cleanup()
 {
     delete janela_;
     janela_ = nullptr;
+    limparDadosPersistidos();
 }
 
 // GIVEN a tela de login aberta.
