@@ -88,7 +88,7 @@ public:
 
     virtual const Financeiro& financeiro() const = 0;
 
-    /// persistencia simples em arquivo texto para o prototipo
+    /// persistencia simples em arquivo texto para o prototipos
     virtual void salvarEmArquivo(const std::string& caminho) const = 0;
     virtual void carregarDeArquivo(const std::string& caminho) = 0;
 

@@ -68,7 +68,7 @@ QLabel* titulo(const QString& texto)
     return label;
 }
 
-// cria um item de tabela somente leitura (nao editavel pelo usuario)
+// cria um item de tabela somente read (nao editavel pelo usuario)
 QTableWidgetItem* item(const QString& text)
 {
     auto* tableItem = new QTableWidgetItem(text);

@@ -23,7 +23,7 @@ class QTableWidget;
 /// QStackedWidget: login, area do cliente e painel do administrador. toda
 /// a logica de negocio fica em bellezasys::AgendaService (system_); esta
 /// classe so monta a interface e traduz as acoes do usuario em chamadas
-/// pro core.
+/// pro core
 class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget* parent = nullptr);
