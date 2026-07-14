@@ -1,0 +1,5 @@
+<map id="bellezasys::ServicoBody" name="bellezasys::ServicoBody">
+<area shape="rect" id="Node000001" title="classe Body responsavel por guardar os dados reais de um Servico" alt="" coords="5,251,160,448"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_body.html" title=" " alt="" coords="27,5,138,203"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="83,215,85,251,80,250,82,221"/>
+</map>

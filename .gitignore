@@ -9,3 +9,6 @@ bin/
 *.user
 *.autosave
 .DS_Store
+build2/
+.vscode/
+data/
