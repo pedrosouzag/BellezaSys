@@ -4,11 +4,18 @@
 
 #include <QMainWindow>
 
+#include <string>
+#include <vector>
+
 class QComboBox;
+class QDateEdit;
 class QDateTimeEdit;
+class QDoubleSpinBox;
 class QLabel;
 class QLineEdit;
+class QListWidget;
 class QPushButton;
+class QSpinBox;
 class QStackedWidget;
 class QTableWidget;
 
@@ -26,6 +33,8 @@ private:
     /// popula o sistema com usuarios/servicos/profissionais/agendamentos
     /// de demonstracao, so pra facilitar a apresentacao
     void criarDadosIniciais();
+    void carregarDadosPersistidosOuDemo();
+    void salvarDadosSilenciosamente();
 
     /// monta o QStackedWidget com as 3 telas
     void construirInterface();
@@ -52,9 +61,13 @@ private:
     void atualizarTudo();
     void atualizarTabelaCliente();
     void atualizarTabelaAdmin();
+    void atualizarAgendaFiltradaAdmin();
     void atualizarFinanceiroAdmin();
     void atualizarResumoAdmin();
 
+    void adminCadastrarCliente();
+    void adminCadastrarServico();
+    void adminCadastrarProfissional();
     void clienteCriarAgendamento();
     void clienteRemarcarSelecionado();
     void clienteCancelarSelecionado();
@@ -80,6 +93,8 @@ private:
     QString nomeUsuario(const std::string& id) const;
     QString nomeServico(const std::string& id) const;
     QString nomeProfissional(const std::string& id) const;
+    QString proximoId(const QString& prefixo) const;
+    std::vector<std::string> servicosSelecionadosParaProfissional() const;
 
     /// dono da instancia do core (criada com BellezaSystem::createModel(),
     /// destruida com BellezaSystem::deleteModel() no destrutor)
@@ -108,7 +123,23 @@ private:
     QComboBox* adminServicoCombo_ = nullptr;
     QComboBox* adminProfissionalCombo_ = nullptr;
     QDateTimeEdit* adminDataHoraInput_ = nullptr;
+    QComboBox* adminFiltroProfissionalCombo_ = nullptr;
+    QDateEdit* adminFiltroDataInput_ = nullptr;
     QTableWidget* adminAgendamentosTable_ = nullptr;
+    QTableWidget* adminAgendaFiltradaTable_ = nullptr;
     QTableWidget* adminServicosTable_ = nullptr;
     QTableWidget* adminProfissionaisTable_ = nullptr;
+    QTableWidget* adminClientesTable_ = nullptr;
+    QLineEdit* adminClienteNomeInput_ = nullptr;
+    QLineEdit* adminClienteEmailInput_ = nullptr;
+    QLineEdit* adminClienteSenhaInput_ = nullptr;
+    QLineEdit* adminServicoNomeInput_ = nullptr;
+    QDoubleSpinBox* adminServicoPrecoInput_ = nullptr;
+    QSpinBox* adminServicoDuracaoInput_ = nullptr;
+    QDoubleSpinBox* adminServicoComissaoInput_ = nullptr;
+    QLineEdit* adminProfissionalNomeInput_ = nullptr;
+    QLineEdit* adminProfissionalEmailInput_ = nullptr;
+    QSpinBox* adminProfissionalInicioInput_ = nullptr;
+    QSpinBox* adminProfissionalFimInput_ = nullptr;
+    QListWidget* adminProfissionalServicosList_ = nullptr;
 };
