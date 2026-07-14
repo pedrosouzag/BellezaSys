@@ -1,14 +1,14 @@
 <map id="bellezasys::BellezaSystemBody" name="bellezasys::BellezaSystemBody">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,909,210,1373"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,931,210,1453"/>
 <area shape="rect" id="Node000002" href="$classbellezasys_1_1_body.html" title=" " alt="" coords="47,5,158,203"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,215,89,296,89,740,94,910,89,909,84,740,84,296,90,220"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,215,89,296,89,751,94,931,88,931,84,751,84,296,90,220"/>
 <area shape="rect" id="Node000006" href="$classbellezasys_1_1_financeiro_body.html" title=" " alt="" coords="124,252,294,343"/>
 <area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="164,213,187,252,182,253,165,218"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_financeiro_handle.html" title=" " alt="" coords="124,640,305,837"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="189,834,176,894,171,892,188,839"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_financeiro_handle.html" title=" " alt="" coords="124,640,305,859"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="189,856,177,915,172,914,188,861"/>
 <area shape="rect" id="Node000004" href="$classbellezasys_1_1_financeiro.html" title=" " alt="" coords="295,415,440,591"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="302,605,281,641,276,639,304,601"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="304,605,285,642,280,639,307,601"/>
 <area shape="rect" id="Node000005" href="$classbellezasys_1_1_handle.html" title=" " alt="" coords="147,439,272,567"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="211,579,215,641,210,640,211,585"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="211,579,215,641,209,640,211,584"/>
 <area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="209,340,212,422,207,421,209,345"/>
 </map>

@@ -1,11 +1,16 @@
 <map id="bellezasys::BellezaSystemHandle::add" name="bellezasys::BellezaSystemHandle::add">
-<area shape="rect" id="Node000001" title=" " alt="" coords="246,105,425,148"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#ad8ec3a3344e1608ced71c93ff5f41aee" title=" " alt="" coords="12,5,191,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="277,99,197,62,169,51,168,46,199,58,282,97"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system_handle.html#a751858c903f78d1645f6b143c3e36aac" title=" " alt="" coords="5,72,198,115"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="228,112,199,110,198,104,233,111"/>
-<area shape="rect" id="Node000004" href="$classbellezasys_1_1_belleza_system_handle.html#abcaa743f5919397e49aa7643e5a9b4ef" title=" " alt="" coords="12,139,191,181"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="228,143,192,150,191,145,233,141"/>
-<area shape="rect" id="Node000005" href="$classbellezasys_1_1_belleza_system_handle.html#a18ec051c852fa03c59d4b9b647dc504c" title=" " alt="" coords="12,205,191,248"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="282,154,199,196,169,207,168,202,197,191,277,156"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="473,105,652,148"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#ad8ec3a3344e1608ced71c93ff5f41aee" title=" " alt="" coords="239,5,418,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="504,98,424,62,396,51,396,46,426,58,509,98"/>
+<area shape="rect" id="Node000004" href="$classbellezasys_1_1_belleza_system_handle.html#a751858c903f78d1645f6b143c3e36aac" title=" " alt="" coords="233,72,425,115"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="455,112,426,110,425,104,460,111"/>
+<area shape="rect" id="Node000005" href="$classbellezasys_1_1_belleza_system_handle.html#abcaa743f5919397e49aa7643e5a9b4ef" title=" " alt="" coords="239,139,418,181"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="455,142,420,150,419,145,460,141"/>
+<area shape="rect" id="Node000006" href="$classbellezasys_1_1_belleza_system_handle.html#a18ec051c852fa03c59d4b9b647dc504c" title=" " alt="" coords="239,205,418,248"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="509,155,426,196,397,207,395,202,424,191,504,156"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system_handle.html#aec572ad37f9a53903dc000425d076de9" title=" " alt="" coords="5,105,185,148"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="245,55,234,62,139,107,136,103,232,58,250,53"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="215,110,186,116,184,111,220,108"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="221,146,185,142,185,137,226,144"/>
+<area shape="poly" id="edge8_Node000006_Node000003" title=" " alt="" coords="245,199,232,196,137,151,138,146,234,191,250,199"/>
 </map>

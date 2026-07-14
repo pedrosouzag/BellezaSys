@@ -12,5 +12,6 @@ var classbellezasys_1_1_usuario_handle =
     [ "papel", "classbellezasys_1_1_usuario_handle.html#a1ff18809914dc99788290b13dea4756d", null ],
     [ "setEmail", "classbellezasys_1_1_usuario_handle.html#a860e30d653ab843246fd375a765b9d46", null ],
     [ "setNome", "classbellezasys_1_1_usuario_handle.html#afc6e267f9aea572ccd51f2b7f8e1e816", null ],
+    [ "BellezaSystemHandle", "classbellezasys_1_1_usuario_handle.html#aae01459aa54cf238a9b7807e11f6dfdd", null ],
     [ "Unit_Usuario", "classbellezasys_1_1_usuario_handle.html#abd19eabf948055cd7e24289dde962f34", null ]
 ];

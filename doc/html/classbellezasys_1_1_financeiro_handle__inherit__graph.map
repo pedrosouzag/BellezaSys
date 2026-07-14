@@ -1,7 +1,7 @@
 <map id="bellezasys::FinanceiroHandle" name="bellezasys::FinanceiroHandle">
-<area shape="rect" id="Node000001" title=" " alt="" coords="66,229,247,427"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="66,229,247,448"/>
 <area shape="rect" id="Node000002" href="$classbellezasys_1_1_financeiro.html" title=" " alt="" coords="5,5,150,181"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,193,126,230,121,230,112,198"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,193,124,230,119,230,110,198"/>
 <area shape="rect" id="Node000003" href="$classbellezasys_1_1_handle.html" title=" " alt="" coords="174,29,299,157"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="212,169,192,231,188,228,209,174"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="213,169,194,231,190,228,210,174"/>
 </map>

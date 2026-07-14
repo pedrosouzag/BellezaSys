@@ -1,5 +1,7 @@
 <map id="bellezasys::Agendamento::cancelar" name="bellezasys::Agendamento::cancelar">
-<area shape="rect" id="Node000001" title=" " alt="" coords="253,5,424,48"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="253,39,424,81"/>
 <area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#adcc5c55fcd40653ed53e2e917f98e068" title=" " alt="" coords="5,5,205,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="235,27,205,29,205,24,240,26"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="235,46,205,44,205,38,240,45"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system_handle.html#aec572ad37f9a53903dc000425d076de9" title=" " alt="" coords="15,72,195,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="235,75,196,83,195,78,240,74"/>
 </map>

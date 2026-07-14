@@ -1,5 +1,9 @@
 <map id="bellezasys::Usuario::papel" name="bellezasys::Usuario::papel">
-<area shape="rect" id="Node000001" title=" " alt="" coords="233,5,369,48"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#ad8ec3a3344e1608ced71c93ff5f41aee" title=" " alt="" coords="5,5,185,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,27,185,29,185,24,220,26"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="460,39,596,81"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#ad8ec3a3344e1608ced71c93ff5f41aee" title=" " alt="" coords="233,5,412,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="442,47,412,44,412,39,448,46"/>
+<area shape="rect" id="Node000004" href="$classbellezasys_1_1_belleza_system_handle.html#aeba5242f011920b1bc8607de86b86c66" title="persistencia simples em arquivo texto para o prototipos" alt="" coords="233,72,412,115"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="448,73,413,81,412,76,442,74"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system_handle.html#aec572ad37f9a53903dc000425d076de9" title=" " alt="" coords="5,5,185,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="215,27,186,29,185,24,220,26"/>
 </map>

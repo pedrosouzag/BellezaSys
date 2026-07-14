@@ -1,5 +1,7 @@
 <map id="bellezasys::Agendamento::remarcar" name="bellezasys::Agendamento::remarcar">
-<area shape="rect" id="Node000001" title=" " alt="" coords="255,5,426,48"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#aab047c248ee048c3720725755bcbab15" title=" " alt="" coords="5,5,207,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="236,27,207,29,207,24,242,27"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="255,39,426,81"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#aec572ad37f9a53903dc000425d076de9" title=" " alt="" coords="16,5,196,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="237,46,196,42,196,37,242,45"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system_handle.html#aab047c248ee048c3720725755bcbab15" title=" " alt="" coords="5,72,207,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="237,75,208,82,207,76,242,74"/>
 </map>
