@@ -2,8 +2,12 @@
 
 #include <QAbstractItemView>
 #include <QComboBox>
+#include <QDateEdit>
 #include <QDateTime>
 #include <QDateTimeEdit>
+#include <QDir>
+#include <QDoubleSpinBox>
+#include <QFileInfo>
 #include <QFormLayout>
 #include <QFont>
 #include <QGridLayout>
@@ -12,8 +16,10 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QStringList>
 #include <QStackedWidget>
 #include <QTabWidget>
@@ -23,11 +29,15 @@
 #include <QWidget>
 
 #include <chrono>
+#include <stdexcept>
+#include <vector>
 
 using namespace bellezasys;
 
 // funcoes utilitarias internas, so usadas neste arquivo
 namespace {
+
+const char* kArquivoDados = "data/bellezasys.db";
 
 // converte bellezasys::DateTime (chrono) pra QDateTime (Qt)
 QDateTime toQtDateTime(DateTime value)
@@ -76,7 +86,7 @@ MainWindow::MainWindow(QWidget* parent)
     // possui de fato, tudo o resto e derivado dele
     system_ = BellezaSystem::createModel();
 
-    criarDadosIniciais();
+    carregarDadosPersistidosOuDemo();
     construirInterface();
     atualizarTudo();
 }
@@ -85,6 +95,32 @@ MainWindow::~MainWindow()
 {
     // desregistra e destroi o sistema (e tudo que ele possui)
     BellezaSystem::deleteModel(system_);
+}
+
+void MainWindow::carregarDadosPersistidosOuDemo()
+{
+    if (QFileInfo::exists(kArquivoDados)) {
+        try {
+            system_->carregarDeArquivo(kArquivoDados);
+            return;
+        } catch (const std::exception&) {
+            // se o arquivo local estiver invalido, abre com a base de
+            // demonstracao para nao impedir a apresentacao do prototipo
+        }
+    }
+
+    criarDadosIniciais();
+    salvarDadosSilenciosamente();
+}
+
+void MainWindow::salvarDadosSilenciosamente()
+{
+    try {
+        system_->salvarEmArquivo(kArquivoDados);
+    } catch (const std::exception&) {
+        // persistencia e conveniencia do prototipo; erros aparecem nas
+        // acoes principais quando precisam bloquear o usuario
+    }
 }
 
 // cadastra usuarios/servicos/profissionais/agendamentos de exemplo, so
@@ -314,18 +350,121 @@ QWidget* MainWindow::criarTelaAdministrador()
     tabs->addTab(agendaTab, "Agenda geral");
 
     auto* cadastrosTab = new QWidget(tabs);
-    auto* cadastrosLayout = new QGridLayout(cadastrosTab);
+    auto* cadastrosLayout = new QVBoxLayout(cadastrosTab);
+    auto* formsLayout = new QGridLayout();
+
+    auto* clienteBox = new QGroupBox("Novo cliente", cadastrosTab);
+    auto* clienteForm = new QGridLayout(clienteBox);
+    adminClienteNomeInput_ = new QLineEdit(clienteBox);
+    adminClienteEmailInput_ = new QLineEdit(clienteBox);
+    adminClienteSenhaInput_ = new QLineEdit("123", clienteBox);
+    adminClienteSenhaInput_->setEchoMode(QLineEdit::Password);
+    auto* criarClienteButton = new QPushButton("Cadastrar cliente", clienteBox);
+    clienteForm->addWidget(new QLabel("Nome"), 0, 0);
+    clienteForm->addWidget(adminClienteNomeInput_, 0, 1);
+    clienteForm->addWidget(new QLabel("Email"), 1, 0);
+    clienteForm->addWidget(adminClienteEmailInput_, 1, 1);
+    clienteForm->addWidget(new QLabel("Senha"), 2, 0);
+    clienteForm->addWidget(adminClienteSenhaInput_, 2, 1);
+    clienteForm->addWidget(criarClienteButton, 3, 1);
+
+    auto* servicoBox = new QGroupBox("Novo serviço", cadastrosTab);
+    auto* servicoForm = new QGridLayout(servicoBox);
+    adminServicoNomeInput_ = new QLineEdit(servicoBox);
+    adminServicoPrecoInput_ = new QDoubleSpinBox(servicoBox);
+    adminServicoPrecoInput_->setRange(0.0, 10000.0);
+    adminServicoPrecoInput_->setPrefix("R$ ");
+    adminServicoPrecoInput_->setValue(60.0);
+    adminServicoDuracaoInput_ = new QSpinBox(servicoBox);
+    adminServicoDuracaoInput_->setRange(5, 480);
+    adminServicoDuracaoInput_->setSuffix(" min");
+    adminServicoDuracaoInput_->setValue(45);
+    adminServicoComissaoInput_ = new QDoubleSpinBox(servicoBox);
+    adminServicoComissaoInput_->setRange(0.0, 100.0);
+    adminServicoComissaoInput_->setSuffix("%");
+    adminServicoComissaoInput_->setValue(30.0);
+    auto* criarServicoButton = new QPushButton("Cadastrar serviço", servicoBox);
+    servicoForm->addWidget(new QLabel("Nome"), 0, 0);
+    servicoForm->addWidget(adminServicoNomeInput_, 0, 1);
+    servicoForm->addWidget(new QLabel("Preço"), 1, 0);
+    servicoForm->addWidget(adminServicoPrecoInput_, 1, 1);
+    servicoForm->addWidget(new QLabel("Duração"), 2, 0);
+    servicoForm->addWidget(adminServicoDuracaoInput_, 2, 1);
+    servicoForm->addWidget(new QLabel("Comissão"), 3, 0);
+    servicoForm->addWidget(adminServicoComissaoInput_, 3, 1);
+    servicoForm->addWidget(criarServicoButton, 4, 1);
+
+    auto* profissionalBox = new QGroupBox("Novo profissional", cadastrosTab);
+    auto* profissionalForm = new QGridLayout(profissionalBox);
+    adminProfissionalNomeInput_ = new QLineEdit(profissionalBox);
+    adminProfissionalEmailInput_ = new QLineEdit(profissionalBox);
+    adminProfissionalInicioInput_ = new QSpinBox(profissionalBox);
+    adminProfissionalInicioInput_->setRange(0, 23);
+    adminProfissionalInicioInput_->setSuffix("h");
+    adminProfissionalInicioInput_->setValue(9);
+    adminProfissionalFimInput_ = new QSpinBox(profissionalBox);
+    adminProfissionalFimInput_->setRange(1, 24);
+    adminProfissionalFimInput_->setSuffix("h");
+    adminProfissionalFimInput_->setValue(18);
+    adminProfissionalServicosList_ = new QListWidget(profissionalBox);
+    adminProfissionalServicosList_->setMaximumHeight(96);
+    auto* criarProfissionalButton = new QPushButton("Cadastrar profissional", profissionalBox);
+    profissionalForm->addWidget(new QLabel("Nome"), 0, 0);
+    profissionalForm->addWidget(adminProfissionalNomeInput_, 0, 1);
+    profissionalForm->addWidget(new QLabel("Email"), 1, 0);
+    profissionalForm->addWidget(adminProfissionalEmailInput_, 1, 1);
+    profissionalForm->addWidget(new QLabel("Entrada"), 2, 0);
+    profissionalForm->addWidget(adminProfissionalInicioInput_, 2, 1);
+    profissionalForm->addWidget(new QLabel("Saída"), 3, 0);
+    profissionalForm->addWidget(adminProfissionalFimInput_, 3, 1);
+    profissionalForm->addWidget(new QLabel("Serviços"), 4, 0);
+    profissionalForm->addWidget(adminProfissionalServicosList_, 4, 1);
+    profissionalForm->addWidget(criarProfissionalButton, 5, 1);
+
+    formsLayout->addWidget(clienteBox, 0, 0);
+    formsLayout->addWidget(servicoBox, 0, 1);
+    formsLayout->addWidget(profissionalBox, 0, 2);
+    cadastrosLayout->addLayout(formsLayout);
+
+    auto* tabelasLayout = new QGridLayout();
+    adminClientesTable_ = new QTableWidget(0, 4, cadastrosTab);
+    adminClientesTable_->setHorizontalHeaderLabels({"ID", "Nome", "Email", "Perfil"});
+    adminClientesTable_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     adminServicosTable_ = new QTableWidget(0, 4, cadastrosTab);
     adminServicosTable_->setHorizontalHeaderLabels({"ID", "Serviço", "Preço", "Duração"});
     adminServicosTable_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     adminProfissionaisTable_ = new QTableWidget(0, 5, cadastrosTab);
     adminProfissionaisTable_->setHorizontalHeaderLabels({"ID", "Nome", "Email", "Expediente", "Serviços"});
     adminProfissionaisTable_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    cadastrosLayout->addWidget(new QLabel("Serviços cadastrados"), 0, 0);
-    cadastrosLayout->addWidget(new QLabel("Profissionais cadastrados"), 0, 1);
-    cadastrosLayout->addWidget(adminServicosTable_, 1, 0);
-    cadastrosLayout->addWidget(adminProfissionaisTable_, 1, 1);
+    tabelasLayout->addWidget(new QLabel("Clientes"), 0, 0);
+    tabelasLayout->addWidget(new QLabel("Serviços"), 0, 1);
+    tabelasLayout->addWidget(new QLabel("Profissionais"), 0, 2);
+    tabelasLayout->addWidget(adminClientesTable_, 1, 0);
+    tabelasLayout->addWidget(adminServicosTable_, 1, 1);
+    tabelasLayout->addWidget(adminProfissionaisTable_, 1, 2);
+    cadastrosLayout->addLayout(tabelasLayout);
     tabs->addTab(cadastrosTab, "Cadastros");
+
+    auto* agendaVisualTab = new QWidget(tabs);
+    auto* agendaVisualLayout = new QVBoxLayout(agendaVisualTab);
+    auto* filtroBox = new QGroupBox("Agenda do profissional", agendaVisualTab);
+    auto* filtroLayout = new QGridLayout(filtroBox);
+    adminFiltroProfissionalCombo_ = new QComboBox(filtroBox);
+    adminFiltroDataInput_ = new QDateEdit(QDate(2026, 7, 7), filtroBox);
+    adminFiltroDataInput_->setCalendarPopup(true);
+    adminFiltroDataInput_->setDisplayFormat("dd/MM/yyyy");
+    filtroLayout->addWidget(new QLabel("Profissional"), 0, 0);
+    filtroLayout->addWidget(adminFiltroProfissionalCombo_, 0, 1);
+    filtroLayout->addWidget(new QLabel("Data"), 0, 2);
+    filtroLayout->addWidget(adminFiltroDataInput_, 0, 3);
+    agendaVisualLayout->addWidget(filtroBox);
+    adminAgendaFiltradaTable_ = new QTableWidget(0, 6, agendaVisualTab);
+    adminAgendaFiltradaTable_->setHorizontalHeaderLabels({"Hora", "Cliente", "Serviço", "Duração", "Valor", "Status"});
+    adminAgendaFiltradaTable_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    adminAgendaFiltradaTable_->setSelectionBehavior(QAbstractItemView::SelectRows);
+    adminAgendaFiltradaTable_->setSelectionMode(QAbstractItemView::SingleSelection);
+    agendaVisualLayout->addWidget(adminAgendaFiltradaTable_);
+    tabs->addTab(agendaVisualTab, "Agenda visual");
 
     auto* financeiroTab = new QWidget(tabs);
     auto* financeiroLayout = new QVBoxLayout(financeiroTab);
@@ -343,8 +482,13 @@ QWidget* MainWindow::criarTelaAdministrador()
     connect(remarcarButton, &QPushButton::clicked, this, [this]() { adminRemarcarSelecionado(); });
     connect(cancelarButton, &QPushButton::clicked, this, [this]() { adminCancelarSelecionado(); });
     connect(concluirButton, &QPushButton::clicked, this, [this]() { adminConcluirSelecionado(); });
+    connect(criarClienteButton, &QPushButton::clicked, this, [this]() { adminCadastrarCliente(); });
+    connect(criarServicoButton, &QPushButton::clicked, this, [this]() { adminCadastrarServico(); });
+    connect(criarProfissionalButton, &QPushButton::clicked, this, [this]() { adminCadastrarProfissional(); });
     connect(adminServicoCombo_, &QComboBox::currentTextChanged, this, [this]() { atualizarProfissionaisAdmin(); });
     connect(adminDataHoraInput_, &QDateTimeEdit::dateTimeChanged, this, [this]() { atualizarProfissionaisAdmin(); });
+    connect(adminFiltroProfissionalCombo_, &QComboBox::currentTextChanged, this, [this]() { atualizarAgendaFiltradaAdmin(); });
+    connect(adminFiltroDataInput_, &QDateEdit::dateChanged, this, [this]() { atualizarAgendaFiltradaAdmin(); });
 
     return page;
 }
@@ -406,8 +550,11 @@ void MainWindow::preencherCombosCliente()
 // preenche os combos de cliente e servico da tela do administrador
 void MainWindow::preencherCombosAdmin()
 {
+    const QString profissionalFiltroAtual = comboIdAtual(adminFiltroProfissionalCombo_);
     adminClienteCombo_->clear();
     adminServicoCombo_->clear();
+    adminFiltroProfissionalCombo_->clear();
+    adminProfissionalServicosList_->clear();
 
     for (auto it = system_->usuariosBegin(); it != system_->usuariosEnd(); ++it) {
         Usuario* usuario = *it;
@@ -419,6 +566,21 @@ void MainWindow::preencherCombosAdmin()
     for (auto it = system_->servicosBegin(); it != system_->servicosEnd(); ++it) {
         Servico* servico = *it;
         adminServicoCombo_->addItem(QString("%1 - %2").arg(QString::fromStdString(servico->nome()), dinheiro(servico->preco())), QString::fromStdString(servico->id()));
+
+        auto* itemServico = new QListWidgetItem(QString("%1 (%2)").arg(QString::fromStdString(servico->nome()), QString::fromStdString(servico->id())), adminProfissionalServicosList_);
+        itemServico->setData(Qt::UserRole, QString::fromStdString(servico->id()));
+        itemServico->setFlags(itemServico->flags() | Qt::ItemIsUserCheckable);
+        itemServico->setCheckState(Qt::Unchecked);
+    }
+
+    for (auto it = system_->profissionaisBegin(); it != system_->profissionaisEnd(); ++it) {
+        Profissional* profissional = *it;
+        adminFiltroProfissionalCombo_->addItem(QString::fromStdString(profissional->nome()), QString::fromStdString(profissional->id()));
+    }
+
+    const int filtroIndex = adminFiltroProfissionalCombo_->findData(profissionalFiltroAtual);
+    if (filtroIndex >= 0) {
+        adminFiltroProfissionalCombo_->setCurrentIndex(filtroIndex);
     }
 }
 
@@ -474,6 +636,7 @@ void MainWindow::atualizarTudo()
     atualizarProfissionaisAdmin();
     atualizarTabelaCliente();
     atualizarTabelaAdmin();
+    atualizarAgendaFiltradaAdmin();
     atualizarFinanceiroAdmin();
     atualizarResumoAdmin();
 }
@@ -522,6 +685,33 @@ void MainWindow::atualizarTabelaAdmin()
     }
 }
 
+void MainWindow::atualizarAgendaFiltradaAdmin()
+{
+    const QString profissionalId = comboIdAtual(adminFiltroProfissionalCombo_);
+    if (profissionalId.isEmpty()) {
+        adminAgendaFiltradaTable_->setRowCount(0);
+        return;
+    }
+
+    const QDate data = adminFiltroDataInput_->date();
+    const DateTime dia = fromQtDateTime(QDateTime(data, QTime(0, 0)));
+
+    auto inicio = system_->agendaDoProfissionalNoDiaBegin(profissionalId.toStdString(), dia);
+    auto fim = system_->agendaDoProfissionalNoDiaEnd();
+    std::vector<Agendamento*> agendamentos(inicio, fim);
+    adminAgendaFiltradaTable_->setRowCount(static_cast<int>(agendamentos.size()));
+
+    for (int row = 0; row < static_cast<int>(agendamentos.size()); ++row) {
+        Agendamento* agendamento = agendamentos[static_cast<size_t>(row)];
+        adminAgendaFiltradaTable_->setItem(row, 0, item(toQtDateTime(agendamento->inicio()).toString("HH:mm")));
+        adminAgendaFiltradaTable_->setItem(row, 1, item(nomeUsuario(agendamento->clienteId())));
+        adminAgendaFiltradaTable_->setItem(row, 2, item(nomeServico(agendamento->servicoId())));
+        adminAgendaFiltradaTable_->setItem(row, 3, item(QString("%1 min").arg(agendamento->duracao().count())));
+        adminAgendaFiltradaTable_->setItem(row, 4, item(dinheiro(agendamento->valor())));
+        adminAgendaFiltradaTable_->setItem(row, 5, item(QString::fromStdString(toString(agendamento->status()))));
+    }
+}
+
 // atualiza os cartoes de saldo de caixa e comissoes
 void MainWindow::atualizarFinanceiroAdmin()
 {
@@ -543,6 +733,16 @@ void MainWindow::atualizarResumoAdmin()
     }
     adminTotalAgendamentosLabel_->setText(QString::number(static_cast<int>(agendamentos.size())));
     adminAtivosLabel_->setText(QString::number(ativos));
+
+    std::vector<Usuario*> usuarios(system_->usuariosBegin(), system_->usuariosEnd());
+    adminClientesTable_->setRowCount(static_cast<int>(usuarios.size()));
+    for (int row = 0; row < static_cast<int>(usuarios.size()); ++row) {
+        Usuario* usuario = usuarios[static_cast<size_t>(row)];
+        adminClientesTable_->setItem(row, 0, item(QString::fromStdString(usuario->id())));
+        adminClientesTable_->setItem(row, 1, item(QString::fromStdString(usuario->nome())));
+        adminClientesTable_->setItem(row, 2, item(QString::fromStdString(usuario->email())));
+        adminClientesTable_->setItem(row, 3, item(QString::fromStdString(toString(usuario->papel()))));
+    }
 
     std::vector<Servico*> servicos(system_->servicosBegin(), system_->servicosEnd());
     adminServicosTable_->setRowCount(static_cast<int>(servicos.size()));
@@ -570,6 +770,72 @@ void MainWindow::atualizarResumoAdmin()
     }
 }
 
+void MainWindow::adminCadastrarCliente()
+{
+    try {
+        Usuario* usuario = system_->cadastrarUsuario(proximoId("CLI").toStdString(),
+                                                     adminClienteNomeInput_->text().trimmed().toStdString(),
+                                                     adminClienteEmailInput_->text().trimmed().toStdString(),
+                                                     adminClienteSenhaInput_->text().toStdString(),
+                                                     Papel::Cliente);
+        adminClienteNomeInput_->clear();
+        adminClienteEmailInput_->clear();
+        adminClienteSenhaInput_->setText("123");
+        salvarDadosSilenciosamente();
+        atualizarTudo();
+        QMessageBox::information(this, "Cliente cadastrado", "Cliente " + QString::fromStdString(usuario->nome()) + " cadastrado.");
+    } catch (const std::exception& erro) {
+        exibirErro("Cadastro de cliente", erro);
+    }
+}
+
+void MainWindow::adminCadastrarServico()
+{
+    try {
+        Servico* servico = system_->cadastrarServico(proximoId("SER").toStdString(),
+                                                     adminServicoNomeInput_->text().trimmed().toStdString(),
+                                                     adminServicoPrecoInput_->value(),
+                                                     std::chrono::minutes(adminServicoDuracaoInput_->value()),
+                                                     adminServicoComissaoInput_->value() / 100.0);
+        adminServicoNomeInput_->clear();
+        adminServicoPrecoInput_->setValue(60.0);
+        adminServicoDuracaoInput_->setValue(45);
+        adminServicoComissaoInput_->setValue(30.0);
+        salvarDadosSilenciosamente();
+        atualizarTudo();
+        QMessageBox::information(this, "Serviço cadastrado", "Serviço " + QString::fromStdString(servico->nome()) + " cadastrado.");
+    } catch (const std::exception& erro) {
+        exibirErro("Cadastro de serviço", erro);
+    }
+}
+
+void MainWindow::adminCadastrarProfissional()
+{
+    try {
+        const std::vector<std::string> servicos = servicosSelecionadosParaProfissional();
+        if (servicos.empty()) {
+            throw std::logic_error("Selecione ao menos um serviço para o profissional.");
+        }
+
+        Profissional* profissional = system_->cadastrarProfissional(proximoId("PRO").toStdString(),
+                                                                    adminProfissionalNomeInput_->text().trimmed().toStdString(),
+                                                                    adminProfissionalEmailInput_->text().trimmed().toStdString(),
+                                                                    servicos,
+                                                                    adminProfissionalInicioInput_->value(),
+                                                                    adminProfissionalFimInput_->value());
+        adminProfissionalNomeInput_->clear();
+        adminProfissionalEmailInput_->clear();
+        for (int row = 0; row < adminProfissionalServicosList_->count(); ++row) {
+            adminProfissionalServicosList_->item(row)->setCheckState(Qt::Unchecked);
+        }
+        salvarDadosSilenciosamente();
+        atualizarTudo();
+        QMessageBox::information(this, "Profissional cadastrado", "Profissional " + QString::fromStdString(profissional->nome()) + " cadastrado.");
+    } catch (const std::exception& erro) {
+        exibirErro("Cadastro de profissional", erro);
+    }
+}
+
 // pede ao core pra criar o agendamento com os dados escolhidos pelo
 // cliente; qualquer excecao vira um aviso na tela em vez de derrubar o app
 void MainWindow::clienteCriarAgendamento()
@@ -582,6 +848,7 @@ void MainWindow::clienteCriarAgendamento()
             throw std::logic_error("Nenhum profissional disponível para esse serviço e horário.");
         }
         system_->agendar(usuarioLogadoId_.toStdString(), comboIdAtual(clienteProfissionalCombo_).toStdString(), comboIdAtual(clienteServicoCombo_).toStdString(), dataHoraCliente());
+        salvarDadosSilenciosamente();
         atualizarTudo();
         clienteEtapaLabel_->setText("Agendamento criado. A lista abaixo mostra apenas seus horários.");
     } catch (const std::exception& erro) {
@@ -600,6 +867,7 @@ void MainWindow::clienteRemarcarSelecionado()
 
     try {
         system_->remarcarAgendamento(id.toStdString(), dataHoraCliente());
+        salvarDadosSilenciosamente();
         atualizarTudo();
     } catch (const std::exception& erro) {
         exibirErro("Remarcação do cliente", erro);
@@ -616,6 +884,7 @@ void MainWindow::clienteCancelarSelecionado()
 
     try {
         system_->cancelarAgendamento(id.toStdString());
+        salvarDadosSilenciosamente();
         atualizarTudo();
     } catch (const std::exception& erro) {
         exibirErro("Cancelamento do cliente", erro);
@@ -630,6 +899,7 @@ void MainWindow::adminCriarAgendamento()
             throw std::logic_error("Nenhum profissional disponível para esse serviço e horário.");
         }
         system_->agendar(comboIdAtual(adminClienteCombo_).toStdString(), comboIdAtual(adminProfissionalCombo_).toStdString(), comboIdAtual(adminServicoCombo_).toStdString(), dataHoraAdmin());
+        salvarDadosSilenciosamente();
         atualizarTudo();
     } catch (const std::exception& erro) {
         exibirErro("Agendamento administrativo", erro);
@@ -645,6 +915,7 @@ void MainWindow::adminRemarcarSelecionado()
 
     try {
         system_->remarcarAgendamento(id.toStdString(), dataHoraAdmin());
+        salvarDadosSilenciosamente();
         atualizarTudo();
     } catch (const std::exception& erro) {
         exibirErro("Remarcação administrativa", erro);
@@ -660,6 +931,7 @@ void MainWindow::adminCancelarSelecionado()
 
     try {
         system_->cancelarAgendamento(id.toStdString());
+        salvarDadosSilenciosamente();
         atualizarTudo();
     } catch (const std::exception& erro) {
         exibirErro("Cancelamento administrativo", erro);
@@ -677,6 +949,7 @@ void MainWindow::adminConcluirSelecionado()
 
     try {
         system_->concluirAgendamento(id.toStdString());
+        salvarDadosSilenciosamente();
         atualizarTudo();
     } catch (const std::exception& erro) {
         exibirErro("Conclusão de atendimento", erro);
@@ -750,4 +1023,45 @@ QString MainWindow::nomeProfissional(const std::string& id) const
         }
     }
     return QString::fromStdString(id);
+}
+
+QString MainWindow::proximoId(const QString& prefixo) const
+{
+    int maior = 0;
+    const QString marcador = prefixo + "-";
+
+    auto atualizarMaior = [&](const std::string& id) {
+        const QString value = QString::fromStdString(id);
+        if (value.startsWith(marcador)) {
+            bool ok = false;
+            const int numero = value.mid(marcador.size()).toInt(&ok);
+            if (ok && numero > maior) {
+                maior = numero;
+            }
+        }
+    };
+
+    for (auto it = system_->usuariosBegin(); it != system_->usuariosEnd(); ++it) {
+        atualizarMaior((*it)->id());
+    }
+    for (auto it = system_->servicosBegin(); it != system_->servicosEnd(); ++it) {
+        atualizarMaior((*it)->id());
+    }
+    for (auto it = system_->profissionaisBegin(); it != system_->profissionaisEnd(); ++it) {
+        atualizarMaior((*it)->id());
+    }
+
+    return QString("%1-%2").arg(prefixo).arg(maior + 1);
+}
+
+std::vector<std::string> MainWindow::servicosSelecionadosParaProfissional() const
+{
+    std::vector<std::string> servicos;
+    for (int row = 0; row < adminProfissionalServicosList_->count(); ++row) {
+        QListWidgetItem* itemServico = adminProfissionalServicosList_->item(row);
+        if (itemServico->checkState() == Qt::Checked) {
+            servicos.push_back(itemServico->data(Qt::UserRole).toString().toStdString());
+        }
+    }
+    return servicos;
 }
