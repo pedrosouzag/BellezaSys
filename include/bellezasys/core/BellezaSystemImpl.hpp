@@ -61,7 +61,7 @@ public:
     friend class Unit_BellezaSystem;
 };
 
-/// classe Handle que implementa a interface BellezaSystem, delegando os
+/// classe Handle que implementa a interface BellezaSystem, delegando 
 /// dados reais para um BellezaSystemBody (pImpl_)
 class BellezaSystemHandle : public BellezaSystem, public Handle<BellezaSystemBody> {
 

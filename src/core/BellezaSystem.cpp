@@ -465,7 +465,7 @@ Agendamento* BellezaSystemHandle::concluirAgendamento(const std::string& agendam
     return agendamento;
 }
 
-// recalcula a lista de profissionais disponiveis e guarda no cache do
+// recalcula a lista dos profissionais disponiveis e guarda no cache do
 // body; o iterator retornado (e o de profissionaisDisponiveisEnd())
 // aponta pra esse cache
 std::vector<Profissional*>::iterator BellezaSystemHandle::profissionaisDisponiveisBegin(const std::string& servicoId, DateTime inicio)
