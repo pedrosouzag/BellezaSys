@@ -3,6 +3,7 @@
 #include "bellezasys/core/AgendaService.hpp"
 
 #include <chrono>
+#include <cstdio>
 #include <iterator>
 #include <stdexcept>
 
@@ -140,4 +141,50 @@ void cenarioCompletoSalaoFuncionalTest() {
     cout << "Cenario completo do salao: teste funcional passou!" << endl;
 
     BellezaSystem::deleteModel(salao);
+}
+
+// GIVEN um administrador configurando cliente, servico e profissional.
+// WHEN ele cria agendamentos, salva em arquivo e reabre o sistema.
+// THEN os cadastros continuam disponiveis e a agenda filtrada do
+// profissional mostra somente os horarios do dia escolhido.
+void jornadaAdministrativaPersistenciaFuncionalTest() {
+
+    const char* caminho = "bin/funcional_bellezasys_persistencia.db";
+    std::remove(caminho);
+
+    BellezaSystem* salao = BellezaSystem::createModel();
+
+    salao->cadastrarUsuario("ADM-1", "Carla", "admin@belleza.com", "admin", Papel::Administrador);
+    salao->cadastrarUsuario("CLI-1", "Marina", "marina@email.com", "123", Papel::Cliente);
+    salao->cadastrarUsuario("CLI-2", "Joao", "joao@email.com", "123", Papel::Cliente);
+    salao->cadastrarServico("SER-CORTE", "Corte", 80.0, std::chrono::minutes(45), 0.35);
+    salao->cadastrarServico("SER-BARBA", "Barba", 40.0, std::chrono::minutes(30), 0.25);
+    salao->cadastrarProfissional("PRO-ANA", "Ana", "ana@belleza.com", {"SER-CORTE", "SER-BARBA"}, 9, 18);
+
+    salao->agendar("CLI-1", "PRO-ANA", "SER-CORTE", makeDateTime(2026, 7, 7, 10, 0));
+    salao->agendar("CLI-2", "PRO-ANA", "SER-BARBA", makeDateTime(2026, 7, 7, 11, 0));
+    salao->agendar("CLI-1", "PRO-ANA", "SER-CORTE", makeDateTime(2026, 7, 8, 10, 0));
+
+    salao->salvarEmArquivo(caminho);
+
+    BellezaSystem* reaberto = BellezaSystem::createModel();
+    reaberto->carregarDeArquivo(caminho);
+
+    assert(reaberto->login("admin@belleza.com", "admin"));
+    assert(std::distance(reaberto->usuariosBegin(), reaberto->usuariosEnd()) == 3);
+    assert(std::distance(reaberto->servicosBegin(), reaberto->servicosEnd()) == 2);
+    assert(std::distance(reaberto->profissionaisBegin(), reaberto->profissionaisEnd()) == 1);
+
+    auto inicio = reaberto->agendaDoProfissionalNoDiaBegin("PRO-ANA", makeDateTime(2026, 7, 7, 0, 0));
+    auto fim = reaberto->agendaDoProfissionalNoDiaEnd();
+    assert(std::distance(inicio, fim) == 2);
+    assert((*inicio)->servicoId() == "SER-CORTE");
+    ++inicio;
+    assert((*inicio)->servicoId() == "SER-BARBA");
+
+    cout << "Jornada administrativa com persistencia: teste funcional passou!" << endl;
+
+    BellezaSystem::deleteModel(salao);
+    BellezaSystem::deleteModel(reaberto);
+    std::remove(caminho);
 }
