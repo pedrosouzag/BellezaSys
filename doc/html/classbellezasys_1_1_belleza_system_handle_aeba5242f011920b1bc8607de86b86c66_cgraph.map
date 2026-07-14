@@ -1,0 +1,45 @@
+<map id="bellezasys::BellezaSystemHandle::salvarEmArquivo" name="bellezasys::BellezaSystemHandle::salvarEmArquivo">
+<area shape="rect" id="Node000001" title="persistencia simples em arquivo texto para o prototipos" alt="" coords="5,608,185,651"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_agendamento.html#af1e8d001af53fdd93536b2e1f8e3e991" title=" " alt="" coords="242,5,413,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="96,607,111,494,139,330,157,245,179,167,203,103,231,58,236,56,233,60,235,62,208,105,184,169,163,246,144,331,116,495,101,608"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_servico.html#aef81c46edfe0f80388ebe78da262cb8b" title=" " alt="" coords="260,72,395,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="93,607,95,520,101,459,111,392,128,321,153,251,186,184,231,125,248,113,245,118,235,129,191,187,157,253,133,322,116,393,106,460,100,520,98,608"/>
+<area shape="rect" id="Node000004" href="$classbellezasys_1_1_profissional.html#a82a6d48b2e78e4e3c678f927d78bf8ec" title=" " alt="" coords="248,139,407,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="94,607,100,530,119,419,136,359,160,299,191,242,231,192,236,189,234,193,235,195,195,245,165,301,141,360,124,420,105,531,99,608"/>
+<area shape="rect" id="Node000005" href="$classbellezasys_1_1_usuario.html#a13a05fad243f4fb3fb04dbd894904742" title=" " alt="" coords="259,205,396,248"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="95,607,105,541,127,447,144,397,167,347,196,300,231,258,247,248,244,252,235,262,200,303,172,349,149,399,132,449,110,541,101,608"/>
+<area shape="rect" id="Node000006" href="$classbellezasys_1_1_profissional.html#af8420bee9ed4aa1d08ec3d2f86a01203" title=" " alt="" coords="248,272,407,315"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="97,607,110,551,135,476,153,435,175,395,200,358,231,325,237,322,234,326,235,329,205,361,179,398,158,437,140,478,116,553,103,608"/>
+<area shape="rect" id="Node000007" href="$classbellezasys_1_1_profissional.html#a8fbbae9c2a9505d001d0053f672f9866" title=" " alt="" coords="248,339,407,381"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="101,607,117,562,144,504,182,444,205,416,231,391,239,388,236,392,234,395,209,420,187,447,149,507,122,564,106,608"/>
+<area shape="rect" id="Node000008" href="$classbellezasys_1_1_agendamento.html#ab4d320d26da4a5f596ab1be9681e48a8" title=" " alt="" coords="233,405,422,432"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="104,607,123,571,151,526,187,481,231,442,242,437,239,441,234,446,191,484,155,529,127,573,109,609"/>
+<area shape="rect" id="Node000009" href="$classbellezasys_1_1_profissional.html#a2e2e8676ac3d2315a0ecb3ba42428880" title=" " alt="" coords="239,456,416,483"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="110,606,160,549,194,518,231,492,245,487,242,491,234,497,197,523,164,553,115,609"/>
+<area shape="rect" id="Node000010" href="$classbellezasys_1_1_servico.html#ae021e49785e5563a9891f1f2d4b254d4" title=" " alt="" coords="251,507,404,533"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="124,606,173,574,232,543,252,536,249,540,234,548,176,578,128,609"/>
+<area shape="rect" id="Node000011" href="$classbellezasys_1_1_usuario.html#a38fe8a6d8a0c66683cb2e1db0efb8049" title=" " alt="" coords="250,557,404,584"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="180,605,259,586,255,590,184,610"/>
+<area shape="rect" id="Node000012" href="$classbellezasys_1_1_agendamento.html#a8bceb52c04c5f06a1a0c98a7ba472956" title=" " alt="" coords="242,608,413,651"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="184,627,228,628,224,631,187,632"/>
+<area shape="rect" id="Node000013" href="$classbellezasys_1_1_profissional.html#a4b5439109d2cf6028a6849913dc0b9ca" title=" " alt="" coords="248,675,407,717"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="170,649,238,668,234,671,173,654"/>
+<area shape="rect" id="Node000014" href="$classbellezasys_1_1_servico.html#aeea1550c36de555896fbcdb49c0e47a6" title=" " alt="" coords="260,741,395,784"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="121,649,173,688,234,727,248,735,243,737,231,732,170,692,122,654"/>
+<area shape="rect" id="Node000015" href="$classbellezasys_1_1_usuario.html#a4ae877cd836d62c48e30d99ac181944b" title=" " alt="" coords="259,808,396,851"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="108,648,159,720,194,759,234,794,248,803,243,805,231,798,190,763,155,723,109,654"/>
+<area shape="rect" id="Node000016" href="$classbellezasys_1_1_usuario.html#a2bb004105377d5641680e49e8d8d0fa2" title=" " alt="" coords="259,875,396,917"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="103,648,123,694,149,751,187,810,209,837,234,861,248,871,242,872,231,865,205,840,182,813,145,753,118,696,103,654"/>
+<area shape="rect" id="Node000017" href="$classbellezasys_1_1_servico.html#aa1db8da342100aed261d557a84272a09" title="percentual (0 a 1) que o profissional recebe de comissao sobre o preco" alt="" coords="253,941,402,984"/>
+<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="100,649,116,706,141,780,158,820,179,859,205,895,234,927,243,935,238,936,231,931,201,899,175,862,153,822,136,782,111,707,100,654"/>
+<area shape="rect" id="Node000018" href="$classbellezasys_1_1_servico.html#a0e0f38d42a69ed9987c10c79be09930b" title=" " alt="" coords="260,1008,395,1051"/>
+<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="98,648,110,717,132,809,150,858,172,907,200,953,235,994,248,1006,243,1007,231,998,196,957,167,910,145,860,127,810,105,718,98,654"/>
+<area shape="rect" id="Node000019" href="$classbellezasys_1_1_agendamento.html#a708d4608f037457706b8687b8eaa7194" title=" " alt="" coords="242,1075,413,1117"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="97,649,105,728,124,837,141,897,165,956,196,1012,235,1061,237,1065,232,1065,231,1064,191,1014,160,958,136,898,119,838,100,728,97,654"/>
+<area shape="rect" id="Node000020" href="$classbellezasys_1_1_agendamento.html#af1dcddfa8de7dc4b5a8729f7c0d53019" title=" " alt="" coords="242,1141,413,1184"/>
+<area shape="poly" id="edge19_Node000001_Node000020" title=" " alt="" coords="96,649,101,738,106,798,117,865,133,935,158,1004,191,1069,235,1128,237,1131,232,1131,231,1131,186,1072,153,1006,128,936,111,866,101,799,95,738,95,654"/>
+<area shape="rect" id="Node000021" href="$classbellezasys_1_1_profissional.html#ad70ef23ea4ba05a9285bc3deadf8fe9c" title=" " alt="" coords="248,1208,407,1251"/>
+<area shape="poly" id="edge20_Node000001_Node000021" title=" " alt="" coords="99,648,116,763,144,927,163,1011,184,1088,208,1151,235,1194,238,1199,233,1199,231,1198,203,1153,179,1089,157,1012,139,928,111,764,99,654"/>
+<area shape="rect" id="Node000022" href="$classbellezasys_1_1_agendamento.html#a0c1c4b205fe949c532f3902145b4f5db" title=" " alt="" coords="242,1275,413,1317"/>
+<area shape="poly" id="edge21_Node000001_Node000022" title=" " alt="" coords="98,648,114,775,140,958,158,1053,180,1140,206,1212,220,1240,235,1261,237,1265,232,1264,231,1264,215,1243,201,1214,175,1142,153,1054,135,959,109,776,98,654"/>
+</map>

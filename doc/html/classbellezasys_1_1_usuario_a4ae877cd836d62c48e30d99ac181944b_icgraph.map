@@ -1,5 +1,7 @@
 <map id="bellezasys::Usuario::nome" name="bellezasys::Usuario::nome">
-<area shape="rect" id="Node000001" title=" " alt="" coords="190,5,326,48"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_usuario.html#a6ecf94c5acc7a1213c407d398dfaa3c9" title=" " alt="" coords="5,5,142,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,27,142,29,142,24,177,26"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="233,39,369,81"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_belleza_system_handle.html#aeba5242f011920b1bc8607de86b86c66" title="persistencia simples em arquivo texto para o prototipos" alt="" coords="5,5,185,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,47,185,44,185,39,220,46"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_usuario.html#a6ecf94c5acc7a1213c407d398dfaa3c9" title=" " alt="" coords="27,72,163,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="215,74,164,85,163,80,220,73"/>
 </map>

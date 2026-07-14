@@ -1,15 +1,15 @@
 <map id="bellezasys::Body" name="bellezasys::Body">
 <area shape="rect" id="Node000001" title=" " alt="" coords="577,5,688,203"/>
-<area shape="rect" id="Node000002" href="$classbellezasys_1_1_agendamento_body.html" title="classe Body responsavel por guardar os dados reais de um Agendamento" alt="" coords="5,373,196,613"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="561,113,483,128,389,154,341,172,294,194,249,221,209,253,185,279,164,309,133,375,129,373,160,307,181,276,206,249,246,216,291,189,339,167,388,149,482,123,565,111"/>
-<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system_body.html" title=" " alt="" coords="220,251,424,736"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="562,146,500,193,468,221,439,252,426,268,422,265,435,249,464,218,497,189,566,142"/>
-<area shape="rect" id="Node000004" href="$classbellezasys_1_1_financeiro_body.html" title=" " alt="" coords="449,448,619,539"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="606,215,547,450,543,447,602,219"/>
-<area shape="rect" id="Node000005" href="$classbellezasys_1_1_profissional_body.html" title="classe Body responsavel por guardar os dados reais de um Profissional" alt="" coords="643,384,822,603"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="663,215,707,385,702,384,660,219"/>
-<area shape="rect" id="Node000006" href="$classbellezasys_1_1_servico_body.html" title="classe Body responsavel por guardar os dados reais de um Servico" alt="" coords="846,395,1001,592"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="701,138,772,186,806,216,836,249,858,283,877,320,904,396,899,394,872,322,854,286,832,252,803,219,769,190,701,143"/>
-<area shape="rect" id="Node000007" href="$classbellezasys_1_1_usuario_body.html" title="classe Body responsavel por guardar os dados reais de um Usuario" alt="" coords="1024,405,1180,581"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="702,112,776,127,859,153,901,171,942,193,980,219,1015,249,1042,284,1064,323,1080,365,1091,407,1086,404,1075,366,1059,326,1038,287,1011,253,977,223,939,198,899,176,857,158,774,132,704,117"/>
+<area shape="rect" id="Node000002" href="$classbellezasys_1_1_agendamento_body.html" title="classe Body responsavel por guardar os dados reais de um Agendamento" alt="" coords="5,403,196,643"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="560,113,483,127,388,152,340,170,293,193,249,220,209,253,181,286,158,323,140,364,126,404,121,402,135,362,153,321,176,283,205,249,246,216,290,188,338,166,387,147,481,122,565,110"/>
+<area shape="rect" id="Node000003" href="$classbellezasys_1_1_belleza_system_body.html" title=" " alt="" coords="220,251,424,795"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="563,145,500,192,467,221,439,252,426,269,422,266,435,249,464,217,497,188,567,141"/>
+<area shape="rect" id="Node000004" href="$classbellezasys_1_1_financeiro_body.html" title=" " alt="" coords="449,477,619,568"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="608,215,547,479,542,476,604,219"/>
+<area shape="rect" id="Node000005" href="$classbellezasys_1_1_profissional_body.html" title="classe Body responsavel por guardar os dados reais de um Profissional" alt="" coords="643,413,822,632"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="661,215,709,414,704,413,658,219"/>
+<area shape="rect" id="Node000006" href="$classbellezasys_1_1_servico_body.html" title="classe Body responsavel por guardar os dados reais de um Servico" alt="" coords="846,424,1001,621"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="701,137,773,185,807,215,836,249,862,290,882,335,909,425,904,423,877,337,857,293,832,252,803,219,769,189,701,143"/>
+<area shape="rect" id="Node000007" href="$classbellezasys_1_1_usuario_body.html" title="classe Body responsavel por guardar os dados reais de um Usuario" alt="" coords="1024,435,1180,611"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="703,111,776,126,859,152,902,170,942,192,981,218,1015,249,1046,291,1069,339,1085,388,1095,436,1091,434,1080,389,1064,341,1042,294,1011,252,977,222,940,197,899,175,858,157,775,131,704,116"/>
 </map>
