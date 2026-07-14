@@ -1,10 +1,201 @@
 #include "bellezasys/core/BellezaSystemImpl.hpp"
 
 #include <algorithm>
+#include <ctime>
+#include <filesystem>
+#include <fstream>
+#include <sstream>
 #include <stdexcept>
 #include <utility>
 
 namespace bellezasys {
+
+namespace {
+
+std::string escaparCampo(const std::string& value)
+{
+    std::string output;
+    for (char ch : value) {
+        if (ch == '\\' || ch == '\t' || ch == '\n') {
+            output.push_back('\\');
+        }
+        if (ch == '\t') {
+            output.push_back('t');
+        } else if (ch == '\n') {
+            output.push_back('n');
+        } else {
+            output.push_back(ch);
+        }
+    }
+    return output;
+}
+
+std::string desescaparCampo(const std::string& value)
+{
+    std::string output;
+    bool escapado = false;
+    for (char ch : value) {
+        if (escapado) {
+            if (ch == 't') {
+                output.push_back('\t');
+            } else if (ch == 'n') {
+                output.push_back('\n');
+            } else {
+                output.push_back(ch);
+            }
+            escapado = false;
+        } else if (ch == '\\') {
+            escapado = true;
+        } else {
+            output.push_back(ch);
+        }
+    }
+    if (escapado) {
+        output.push_back('\\');
+    }
+    return output;
+}
+
+std::vector<std::string> separarCampos(const std::string& linha)
+{
+    std::vector<std::string> campos;
+    std::string atual;
+    bool escapado = false;
+    for (char ch : linha) {
+        if (escapado) {
+            atual.push_back('\\');
+            atual.push_back(ch);
+            escapado = false;
+        } else if (ch == '\\') {
+            escapado = true;
+        } else if (ch == '\t') {
+            campos.push_back(desescaparCampo(atual));
+            atual.clear();
+        } else {
+            atual.push_back(ch);
+        }
+    }
+    if (escapado) {
+        atual.push_back('\\');
+    }
+    campos.push_back(desescaparCampo(atual));
+    return campos;
+}
+
+std::string juntarServicos(const std::vector<std::string>& servicos)
+{
+    std::string output;
+    for (size_t i = 0; i < servicos.size(); ++i) {
+        if (i > 0) {
+            output += ",";
+        }
+        output += servicos[i];
+    }
+    return output;
+}
+
+std::vector<std::string> separarServicos(const std::string& value)
+{
+    std::vector<std::string> servicos;
+    std::stringstream stream(value);
+    std::string item;
+    while (std::getline(stream, item, ',')) {
+        if (!item.empty()) {
+            servicos.push_back(item);
+        }
+    }
+    return servicos;
+}
+
+std::string papelParaArquivo(Papel papel)
+{
+    switch (papel) {
+    case Papel::Cliente:
+        return "Cliente";
+    case Papel::Funcionario:
+        return "Funcionario";
+    case Papel::Administrador:
+        return "Administrador";
+    }
+    return "Cliente";
+}
+
+Papel papelDoArquivo(const std::string& value)
+{
+    if (value == "Cliente") {
+        return Papel::Cliente;
+    }
+    if (value == "Funcionario") {
+        return Papel::Funcionario;
+    }
+    if (value == "Administrador") {
+        return Papel::Administrador;
+    }
+    throw std::invalid_argument("Papel invalido no arquivo: " + value);
+}
+
+std::string statusParaArquivo(StatusAgendamento status)
+{
+    switch (status) {
+    case StatusAgendamento::Agendado:
+        return "Agendado";
+    case StatusAgendamento::Remarcado:
+        return "Remarcado";
+    case StatusAgendamento::Cancelado:
+        return "Cancelado";
+    case StatusAgendamento::Concluido:
+        return "Concluido";
+    }
+    return "Agendado";
+}
+
+StatusAgendamento statusDoArquivo(const std::string& value)
+{
+    if (value == "Agendado") {
+        return StatusAgendamento::Agendado;
+    }
+    if (value == "Remarcado") {
+        return StatusAgendamento::Remarcado;
+    }
+    if (value == "Cancelado") {
+        return StatusAgendamento::Cancelado;
+    }
+    if (value == "Concluido") {
+        return StatusAgendamento::Concluido;
+    }
+    throw std::invalid_argument("Status invalido no arquivo: " + value);
+}
+
+long long timestamp(DateTime value)
+{
+    return static_cast<long long>(std::chrono::system_clock::to_time_t(value));
+}
+
+DateTime dateTimeDeTimestamp(const std::string& value)
+{
+    return std::chrono::system_clock::from_time_t(static_cast<std::time_t>(std::stoll(value)));
+}
+
+std::tm localTime(DateTime value)
+{
+    const std::time_t raw = std::chrono::system_clock::to_time_t(value);
+    std::tm local = {};
+#if defined(_WIN32)
+    localtime_s(&local, &raw);
+#else
+    localtime_r(&raw, &local);
+#endif
+    return local;
+}
+
+bool mesmoDia(DateTime a, DateTime b)
+{
+    const std::tm da = localTime(a);
+    const std::tm db = localTime(b);
+    return da.tm_year == db.tm_year && da.tm_mon == db.tm_mon && da.tm_mday == db.tm_mday;
+}
+
+} // namespace
 
 // ============================= REGISTRO =============================
 
@@ -59,6 +250,25 @@ void BellezaSystemBody::add(Profissional* profissional)
 void BellezaSystemBody::add(Agendamento* agendamento)
 {
     agendamentos.push_back(agendamento);
+}
+
+void BellezaSystemBody::limpar()
+{
+    for (Usuario* usuario : usuarios) delete usuario;
+    for (Servico* servico : servicos) delete servico;
+    for (Profissional* profissional : profissionais) delete profissional;
+    for (Agendamento* agendamento : agendamentos) delete agendamento;
+
+    usuarios.clear();
+    servicos.clear();
+    profissionais.clear();
+    agendamentos.clear();
+    profissionaisDisponiveisCache.clear();
+    agendamentosDoProfissionalCache.clear();
+    agendaDoProfissionalNoDiaCache.clear();
+    agendamentosDoClienteCache.clear();
+    financeiro.limpar();
+    proximoAgendamento = 1;
 }
 
 Usuario* BellezaSystemBody::usuarioObrigatorio(const std::string& id) const
@@ -133,15 +343,7 @@ bool BellezaSystemBody::profissionalDisponivel(const std::string& profissionalId
 // desses ponteiros)
 BellezaSystemBody::~BellezaSystemBody()
 {
-    for (Usuario* usuario : usuarios) delete usuario;
-    for (Servico* servico : servicos) delete servico;
-    for (Profissional* profissional : profissionais) delete profissional;
-    for (Agendamento* agendamento : agendamentos) delete agendamento;
-
-    usuarios.clear();
-    servicos.clear();
-    profissionais.clear();
-    agendamentos.clear();
+    limpar();
 }
 
 // ============================= HANDLE =============================
@@ -304,6 +506,29 @@ std::vector<Agendamento*>::iterator BellezaSystemHandle::agendamentosDoProfissio
     return pImpl_->agendamentosDoProfissionalCache.end();
 }
 
+std::vector<Agendamento*>::iterator BellezaSystemHandle::agendaDoProfissionalNoDiaBegin(const std::string& profissionalId, DateTime dia)
+{
+    pImpl_->profissionalObrigatorio(profissionalId);
+
+    pImpl_->agendaDoProfissionalNoDiaCache.clear();
+    for (Agendamento* agendamento : pImpl_->agendamentos) {
+        if (agendamento->profissionalId() == profissionalId && mesmoDia(agendamento->inicio(), dia)) {
+            pImpl_->agendaDoProfissionalNoDiaCache.push_back(agendamento);
+        }
+    }
+
+    std::sort(pImpl_->agendaDoProfissionalNoDiaCache.begin(), pImpl_->agendaDoProfissionalNoDiaCache.end(), [](Agendamento* a, Agendamento* b) {
+        return a->inicio() < b->inicio();
+    });
+
+    return pImpl_->agendaDoProfissionalNoDiaCache.begin();
+}
+
+std::vector<Agendamento*>::iterator BellezaSystemHandle::agendaDoProfissionalNoDiaEnd()
+{
+    return pImpl_->agendaDoProfissionalNoDiaCache.end();
+}
+
 std::vector<Agendamento*>::iterator BellezaSystemHandle::agendamentosDoClienteBegin(const std::string& clienteId)
 {
     pImpl_->usuarioObrigatorio(clienteId);
@@ -338,6 +563,121 @@ std::vector<Agendamento*>::iterator BellezaSystemHandle::agendamentosEnd() { ret
 const Financeiro& BellezaSystemHandle::financeiro() const
 {
     return pImpl_->financeiro;
+}
+
+void BellezaSystemHandle::salvarEmArquivo(const std::string& caminho) const
+{
+    const std::filesystem::path destino(caminho);
+    if (destino.has_parent_path()) {
+        std::filesystem::create_directories(destino.parent_path());
+    }
+
+    std::ofstream arquivo(caminho);
+    if (!arquivo) {
+        throw std::runtime_error("Nao foi possivel abrir arquivo para salvar: " + caminho);
+    }
+
+    arquivo << "BELLEZASYS_DATA_V1\n";
+    for (Usuario* usuario : pImpl_->usuarios) {
+        arquivo << "USUARIO\t"
+                << escaparCampo(usuario->id()) << "\t"
+                << escaparCampo(usuario->nome()) << "\t"
+                << escaparCampo(usuario->email()) << "\t"
+                << escaparCampo(static_cast<UsuarioHandle*>(usuario)->pImpl_->senha) << "\t"
+                << papelParaArquivo(usuario->papel()) << "\n";
+    }
+    for (Servico* servico : pImpl_->servicos) {
+        arquivo << "SERVICO\t"
+                << escaparCampo(servico->id()) << "\t"
+                << escaparCampo(servico->nome()) << "\t"
+                << servico->preco() << "\t"
+                << servico->duracao().count() << "\t"
+                << servico->percentualComissao() << "\n";
+    }
+    for (Profissional* profissional : pImpl_->profissionais) {
+        arquivo << "PROFISSIONAL\t"
+                << escaparCampo(profissional->id()) << "\t"
+                << escaparCampo(profissional->nome()) << "\t"
+                << escaparCampo(profissional->email()) << "\t"
+                << escaparCampo(juntarServicos(profissional->servicosAtendidos())) << "\t"
+                << profissional->expedienteInicioHora() << "\t"
+                << profissional->expedienteFimHora() << "\n";
+    }
+    for (Agendamento* agendamento : pImpl_->agendamentos) {
+        arquivo << "AGENDAMENTO\t"
+                << escaparCampo(agendamento->id()) << "\t"
+                << escaparCampo(agendamento->clienteId()) << "\t"
+                << escaparCampo(agendamento->profissionalId()) << "\t"
+                << escaparCampo(agendamento->servicoId()) << "\t"
+                << timestamp(agendamento->inicio()) << "\t"
+                << statusParaArquivo(agendamento->status()) << "\n";
+    }
+}
+
+void BellezaSystemHandle::carregarDeArquivo(const std::string& caminho)
+{
+    std::ifstream arquivo(caminho);
+    if (!arquivo) {
+        throw std::runtime_error("Nao foi possivel abrir arquivo para carregar: " + caminho);
+    }
+
+    pImpl_->limpar();
+
+    std::string linha;
+    bool primeiraLinha = true;
+    while (std::getline(arquivo, linha)) {
+        if (linha.empty()) {
+            continue;
+        }
+        if (primeiraLinha) {
+            primeiraLinha = false;
+            if (linha != "BELLEZASYS_DATA_V1") {
+                throw std::runtime_error("Arquivo de dados invalido: " + caminho);
+            }
+            continue;
+        }
+
+        const std::vector<std::string> campos = separarCampos(linha);
+        if (campos.empty()) {
+            continue;
+        }
+
+        if (campos[0] == "USUARIO") {
+            if (campos.size() != 6) {
+                throw std::runtime_error("Linha de usuario invalida.");
+            }
+            cadastrarUsuario(campos[1], campos[2], campos[3], campos[4], papelDoArquivo(campos[5]));
+        } else if (campos[0] == "SERVICO") {
+            if (campos.size() != 6) {
+                throw std::runtime_error("Linha de servico invalida.");
+            }
+            cadastrarServico(campos[1], campos[2], std::stod(campos[3]), std::chrono::minutes(std::stoi(campos[4])), std::stod(campos[5]));
+        } else if (campos[0] == "PROFISSIONAL") {
+            if (campos.size() != 7) {
+                throw std::runtime_error("Linha de profissional invalida.");
+            }
+            cadastrarProfissional(campos[1], campos[2], campos[3], separarServicos(campos[4]), std::stoi(campos[5]), std::stoi(campos[6]));
+        } else if (campos[0] == "AGENDAMENTO") {
+            if (campos.size() != 7) {
+                throw std::runtime_error("Linha de agendamento invalida.");
+            }
+            Agendamento* agendamento = agendar(campos[2], campos[3], campos[4], dateTimeDeTimestamp(campos[5]));
+            if (agendamento->id() != campos[1]) {
+                throw std::runtime_error("Sequencia de agendamentos invalida no arquivo.");
+            }
+
+            const StatusAgendamento status = statusDoArquivo(campos[6]);
+            if (status == StatusAgendamento::Remarcado) {
+                agendamento->remarcar(agendamento->inicio());
+            } else if (status == StatusAgendamento::Cancelado) {
+                agendamento->cancelar();
+            } else if (status == StatusAgendamento::Concluido) {
+                concluirAgendamento(agendamento->id());
+            }
+        } else {
+            throw std::runtime_error("Tipo de registro desconhecido: " + campos[0]);
+        }
+    }
 }
 
 } // namespace bellezasys

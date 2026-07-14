@@ -24,6 +24,7 @@ class FinanceiroHandle : public Financeiro, public Handle<FinanceiroBody> {
 public:
     FinanceiroHandle();
 
+    void limpar();
     void registrarPagamento(const Agendamento& agendamento, const Servico& servico) override;
     double saldo() const override;
     double totalComissoes() const override;
