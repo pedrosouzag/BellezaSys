@@ -45,6 +45,7 @@ public:
 
     ~UsuarioHandle() override = default;
 
+    friend class BellezaSystemHandle;
     friend class Unit_Usuario;
 };
 

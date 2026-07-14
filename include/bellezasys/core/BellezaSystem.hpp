@@ -67,6 +67,10 @@ public:
     virtual std::vector<Agendamento*>::iterator agendamentosDoProfissionalBegin(const std::string& profissionalId) = 0;
     virtual std::vector<Agendamento*>::iterator agendamentosDoProfissionalEnd() = 0;
 
+    /// filtra a agenda de um profissional para o mesmo dia da data informada
+    virtual std::vector<Agendamento*>::iterator agendaDoProfissionalNoDiaBegin(const std::string& profissionalId, DateTime dia) = 0;
+    virtual std::vector<Agendamento*>::iterator agendaDoProfissionalNoDiaEnd() = 0;
+
     virtual std::vector<Agendamento*>::iterator agendamentosDoClienteBegin(const std::string& clienteId) = 0;
     virtual std::vector<Agendamento*>::iterator agendamentosDoClienteEnd() = 0;
 
@@ -83,6 +87,10 @@ public:
     virtual std::vector<Agendamento*>::iterator agendamentosEnd() = 0;
 
     virtual const Financeiro& financeiro() const = 0;
+
+    /// persistencia simples em arquivo texto para o prototipo
+    virtual void salvarEmArquivo(const std::string& caminho) const = 0;
+    virtual void carregarDeArquivo(const std::string& caminho) = 0;
 
     /// metodo de fabrica: cria, registra e retorna um novo BellezaSystemHandle
     static BellezaSystem* createModel();

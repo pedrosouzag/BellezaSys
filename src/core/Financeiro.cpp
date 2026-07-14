@@ -8,6 +8,12 @@ namespace bellezasys {
 
 FinanceiroHandle::FinanceiroHandle() = default;
 
+void FinanceiroHandle::limpar()
+{
+    pImpl_->movimentos.clear();
+    pImpl_->comissoes.clear();
+}
+
 // gera um movimento de caixa (entrada = valor do servico, saida = comissao
 // do profissional) e registra a comissao separadamente
 void FinanceiroHandle::registrarPagamento(const Agendamento& agendamento, const Servico& servico)
