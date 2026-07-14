@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <chrono>
+#include <cstdio>
 #include <iterator>
 #include <stdexcept>
 
@@ -288,6 +289,65 @@ bool Unit_BellezaSystem::unit_BellezaSystem_agendamentosDoClienteEDoProfissional
     return true;
 }
 
+// confere que a agenda filtrada devolve somente os horarios daquele
+// profissional no dia escolhido, ordenados por horario
+bool Unit_BellezaSystem::unit_BellezaSystem_agendaDoProfissionalNoDia() {
+    BellezaSystem* system = montarCenarioBasico();
+    system->cadastrarUsuario("CLI-2", "Joao", "joao@email.com", "123", Papel::Cliente);
+    system->cadastrarProfissional("PRO-2", "Bia", "bia@belleza.com", {"SER-CORTE"}, 9, 18);
+
+    system->agendar("CLI-1", "PRO-1", "SER-CORTE", makeDateTime(2026, 7, 7, 14, 0));
+    system->agendar("CLI-2", "PRO-1", "SER-CORTE", makeDateTime(2026, 7, 7, 10, 0));
+    system->agendar("CLI-1", "PRO-1", "SER-CORTE", makeDateTime(2026, 7, 8, 10, 0));
+    system->agendar("CLI-2", "PRO-2", "SER-CORTE", makeDateTime(2026, 7, 7, 11, 0));
+
+    auto inicio = system->agendaDoProfissionalNoDiaBegin("PRO-1", makeDateTime(2026, 7, 7, 0, 0));
+    auto fim = system->agendaDoProfissionalNoDiaEnd();
+    assert(std::distance(inicio, fim) == 2);
+    assert((*inicio)->inicio() == makeDateTime(2026, 7, 7, 10, 0));
+    ++inicio;
+    assert((*inicio)->inicio() == makeDateTime(2026, 7, 7, 14, 0));
+
+    BellezaSystem::deleteModel(system);
+    return true;
+}
+
+// confere que salvar/carregar preserva cadastros, agenda, status e
+// financeiro basico reconstruido a partir de atendimentos concluidos
+bool Unit_BellezaSystem::unit_BellezaSystem_persistenciaArquivo() {
+    const char* caminho = "bin/unit_bellezasys_persistencia.db";
+    std::remove(caminho);
+
+    BellezaSystem* origem = montarCenarioBasico();
+    origem->cadastrarUsuario("CLI-2", "Joao", "joao@email.com", "abc", Papel::Cliente);
+
+    Agendamento* concluido = origem->agendar("CLI-1", "PRO-1", "SER-CORTE", makeDateTime(2026, 7, 7, 10, 0));
+    origem->concluirAgendamento(concluido->id());
+    Agendamento* cancelado = origem->agendar("CLI-2", "PRO-1", "SER-CORTE", makeDateTime(2026, 7, 7, 12, 0));
+    origem->cancelarAgendamento(cancelado->id());
+
+    origem->salvarEmArquivo(caminho);
+
+    BellezaSystem* carregado = BellezaSystem::createModel();
+    carregado->carregarDeArquivo(caminho);
+
+    assert(carregado->login("joao@email.com", "abc"));
+    assert(std::distance(carregado->usuariosBegin(), carregado->usuariosEnd()) == 2);
+    assert(std::distance(carregado->servicosBegin(), carregado->servicosEnd()) == 1);
+    assert(std::distance(carregado->profissionaisBegin(), carregado->profissionaisEnd()) == 1);
+    assert(std::distance(carregado->agendamentosBegin(), carregado->agendamentosEnd()) == 2);
+    assert(carregado->financeiro().saldo() == 80.0 - 80.0 * 0.35);
+
+    auto inicioCli2 = carregado->agendamentosDoClienteBegin("CLI-2");
+    assert(std::distance(inicioCli2, carregado->agendamentosDoClienteEnd()) == 1);
+    assert((*inicioCli2)->status() == StatusAgendamento::Cancelado);
+
+    BellezaSystem::deleteModel(origem);
+    BellezaSystem::deleteModel(carregado);
+    std::remove(caminho);
+    return true;
+}
+
 // confere a gestao de memoria: quantos handles e bodies sao criados e
 // destruidos ao copiar e destruir um BellezaSystemHandle
 bool Unit_BellezaSystem::unit_BellezaSystem_handleBodyTest() {
@@ -354,6 +414,8 @@ bool Unit_BellezaSystem::run_unit_tests_BellezaSystem() {
 
     assert(unit_BellezaSystem_profissionaisDisponiveis());
     assert(unit_BellezaSystem_agendamentosDoClienteEDoProfissional());
+    assert(unit_BellezaSystem_agendaDoProfissionalNoDia());
+    assert(unit_BellezaSystem_persistenciaArquivo());
 
     assert(unit_BellezaSystem_handleBodyTest());
 

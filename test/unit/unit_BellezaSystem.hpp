@@ -30,6 +30,8 @@ public:
 
     static bool unit_BellezaSystem_profissionaisDisponiveis();
     static bool unit_BellezaSystem_agendamentosDoClienteEDoProfissional();
+    static bool unit_BellezaSystem_agendaDoProfissionalNoDia();
+    static bool unit_BellezaSystem_persistenciaArquivo();
 
     /// confere a gestao de memoria dos objetos Handle e Body de BellezaSystem
     static bool unit_BellezaSystem_handleBodyTest();
