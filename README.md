@@ -18,10 +18,12 @@ Sistema de automacao de agendamentos para saloes de beleza, com nucleo C++ separ
 ## Funcionalidades iniciadas
 
 - Cadastro e login de usuarios.
-- Cadastro de servicos e profissionais.
+- Cadastro de clientes, servicos e profissionais pela interface administrativa.
 - Consulta de disponibilidade por servico, profissional, expediente e conflito de horario.
+- Agenda visual filtrada por profissional e data.
 - Agendamento, remarcacao, cancelamento e conclusao.
 - Registro financeiro com saldo de caixa e comissoes.
+- Persistencia simples em arquivo texto (`data/bellezasys.db`).
 - Interface Qt para demonstrar o fluxo inicial ao cliente.
 
 ## Testes (unitarios + funcionais, sem Qt)
@@ -40,6 +42,15 @@ Unit_Agendamento, Unit_Financeiro, Unit_BellezaSystem) e `test/funcional`
 qmake BellezaSys.pro
 make        # ou mingw32-make no Windows com MinGW
 ./BellezaSys
+```
+
+Para nao sobrescrever o Makefile dos testes ao compilar a interface no WSL:
+
+```bash
+mkdir -p build/qt
+qmake BellezaSys.pro -o build/qt/Makefile
+make -C build/qt
+./build/qt/BellezaSys
 ```
 
 Credenciais demonstrativas:

@@ -1,11 +1,17 @@
+.PHONY: all lib tests test runFunctional runUnit run clean
+
 all: lib tests
 
 lib:
+	mkdir -p bin
 	g++ -Wall -Wextra -std=c++17 -fPIC -shared src/core/*.cpp -Iinclude -o bin/libbellezasys.so
 
-tests:
+tests: lib
+	mkdir -p bin
 	g++ -Wall -Wextra -std=c++17 test/funcional/*.cpp -Iinclude -Lbin -lbellezasys -o bin/funcional_tests
 	g++ -Wall -Wextra -std=c++17 test/unit/*.cpp -Iinclude -Itest/unit -Lbin -lbellezasys -o bin/unit_tests
+
+test: tests run
 
 runFunctional:
 	LD_LIBRARY_PATH=./bin ./bin/funcional_tests

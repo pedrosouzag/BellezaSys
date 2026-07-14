@@ -11,3 +11,4 @@ bin/
 .DS_Store
 build2/
 .vscode/
+data/
