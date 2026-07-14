@@ -9,6 +9,7 @@ int main() {
     jornadaClienteFuncionalTest();          // cenario 1: jornada completa do cliente
     conflitoDeAgendaFuncionalTest();         // cenario 2: conflito de agenda
     cenarioCompletoSalaoFuncionalTest();     // cenario 3: dia completo com varios clientes/profissionais
+    jornadaAdministrativaPersistenciaFuncionalTest(); // cenario 4: cadastro, persistencia e agenda filtrada
 
     return 0;
 }

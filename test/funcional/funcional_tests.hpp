@@ -46,4 +46,8 @@ void conflitoDeAgendaFuncionalTest();
 ///   agendamento concluido
 void cenarioCompletoSalaoFuncionalTest();
 
+/// teste funcional da jornada administrativa com cadastros reais,
+/// persistencia simples e consulta de agenda por profissional/data.
+void jornadaAdministrativaPersistenciaFuncionalTest();
+
 #endif
