@@ -27,6 +27,7 @@ public:
     void add(Servico* servico);
     void add(Profissional* profissional);
     void add(Agendamento* agendamento);
+    void limpar();
 
     /// buscam uma entidade pelo id (busca linear) e lancam excecao se ela nao existir
     Usuario* usuarioObrigatorio(const std::string& id) const;
@@ -49,6 +50,7 @@ public:
     /// Begin()/End() do Handle (ver comentario na interface BellezaSystem)
     std::vector<Profissional*> profissionaisDisponiveisCache;
     std::vector<Agendamento*> agendamentosDoProfissionalCache;
+    std::vector<Agendamento*> agendaDoProfissionalNoDiaCache;
     std::vector<Agendamento*> agendamentosDoClienteCache;
 
     /// deleta todas as entidades que o sistema possui
@@ -90,6 +92,9 @@ public:
     std::vector<Agendamento*>::iterator agendamentosDoProfissionalBegin(const std::string& profissionalId) override;
     std::vector<Agendamento*>::iterator agendamentosDoProfissionalEnd() override;
 
+    std::vector<Agendamento*>::iterator agendaDoProfissionalNoDiaBegin(const std::string& profissionalId, DateTime dia) override;
+    std::vector<Agendamento*>::iterator agendaDoProfissionalNoDiaEnd() override;
+
     std::vector<Agendamento*>::iterator agendamentosDoClienteBegin(const std::string& clienteId) override;
     std::vector<Agendamento*>::iterator agendamentosDoClienteEnd() override;
 
@@ -106,6 +111,9 @@ public:
     std::vector<Agendamento*>::iterator agendamentosEnd() override;
 
     const Financeiro& financeiro() const override;
+
+    void salvarEmArquivo(const std::string& caminho) const override;
+    void carregarDeArquivo(const std::string& caminho) override;
 
     ~BellezaSystemHandle() override = default;
 
