@@ -30,14 +30,14 @@ system->cadastrarProfissional("PRO-1", "Ana", "ana@belleza.com", {"SER-CORTE"}, 
 auto horario = makeDateTime(2026, 7, 7, 10, 0);
 Agendamento* agendamento = system->agendar("CLI-1", "PRO-1", "SER-CORTE", horario);
 system->concluirAgendamento(agendamento->id());
+system->salvarEmArquivo("data/bellezasys.db");
 
 BellezaSystem::deleteModel(system);
 ```
 
 ## Proximas evolucoes
 
-- Persistencia em arquivo ou banco SQLite.
-- Tela completa de cadastro.
+- Banco SQLite ou relacional.
 - Envio real de lembretes por WhatsApp usando uma API externa.
 - Controle de permissoes por perfil autenticado.
 - Relatorios financeiros por periodo.
@@ -50,13 +50,24 @@ classes de dominio. `BellezaSystem` e criado atraves da fabrica estatica
 retorna colecoes inteiras por valor: toda consulta com varios resultados
 (`usuarios`, `servicos`, `profissionais`, `agendamentos`,
 `profissionaisDisponiveis`, `agendamentosDoCliente`,
-`agendamentosDoProfissional`) expoe um par de iteradores `Begin()`/`End()`.
+`agendamentosDoProfissional`, `agendaDoProfissionalNoDia`) expoe um par de iteradores `Begin()`/`End()`.
 
 ```cpp
 for (auto it = system->profissionaisBegin(); it != system->profissionaisEnd(); ++it) {
     Profissional* profissional = *it;
     // ...
 }
+```
+
+## Persistencia simples
+
+O prototipo salva e carrega os dados em arquivo texto, mantendo usuarios,
+servicos, profissionais, agendamentos, status e o financeiro reconstruido
+a partir dos atendimentos concluidos.
+
+```cpp
+system->salvarEmArquivo("data/bellezasys.db");
+system->carregarDeArquivo("data/bellezasys.db");
 ```
 
 Os metodos de cadastro (`cadastrarUsuario`, `cadastrarServico`,
