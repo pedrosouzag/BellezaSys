@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Test)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Test)
 
 # nucleo do sistema (sem Qt): regras de negocio do salao
 file(GLOB CORE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/core/*.cpp)
@@ -16,8 +16,9 @@ target_include_directories(bellezasys_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/in
 add_executable(bellezasys_gui
     src/gui/main.cpp
     src/gui/MainWindow.cpp
+    src/gui/OllamaLlmClient.cpp
 )
-target_link_libraries(bellezasys_gui PRIVATE bellezasys_core Qt6::Widgets)
+target_link_libraries(bellezasys_gui PRIVATE bellezasys_core Qt6::Widgets Qt6::Network)
 
 # testes funcionais do nucleo (sem GUI)
 add_executable(funcional_tests
@@ -37,9 +38,10 @@ target_link_libraries(unit_tests PRIVATE bellezasys_core)
 add_executable(gui_tests
     test/gui/gui_tests.cpp
     src/gui/MainWindow.cpp
+    src/gui/OllamaLlmClient.cpp
 )
 target_include_directories(gui_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/gui)
-target_link_libraries(gui_tests PRIVATE bellezasys_core Qt6::Widgets Qt6::Test)
+target_link_libraries(gui_tests PRIVATE bellezasys_core Qt6::Widgets Qt6::Network Qt6::Test)
 
 enable_testing()
 add_test(NAME unit COMMAND unit_tests)
