@@ -43,8 +43,39 @@ protected:
 public:
     virtual Usuario* cadastrarUsuario(std::string id, std::string nome, std::string email, std::string senha, Papel papel) = 0;
 
-    /// confere email e senha contra os usuarios cadastrados
+    /// confere email e senha contra os usuarios cadastrados, sem abrir
+    /// sessao. use iniciarSessao() quando quiser que o controle de acesso
+    /// por perfil passe a valer
     virtual bool login(const std::string& email, const std::string& senha) const = 0;
+
+    /// autentica e guarda quem esta usando o sistema. a partir daqui as
+    /// operacoes controladas passam a exigir permissao do papel dele.
+    /// lanca excecao se o email nao existir ou a senha estiver errada
+    virtual Usuario* iniciarSessao(const std::string& email, const std::string& senha) = 0;
+
+    /// esvazia a sessao; o sistema volta ao modo sem controle de acesso
+    virtual void encerrarSessao() = 0;
+
+    /// quem esta logado agora, ou nullptr quando nao ha sessao
+    virtual Usuario* usuarioDaSessao() const = 0;
+
+    /// true quando o papel do usuario da sessao pode executar a acao.
+    ///
+    /// ATENCAO: sem sessao aberta tudo e permitido. isso e proposital para
+    /// o bootstrap (cadastrar o primeiro administrador), para
+    /// carregarDeArquivo() e para os testes do nucleo poderem montar
+    /// cenarios. ou seja, este e um controle de acesso de aplicacao, e nao
+    /// uma barreira de seguranca: quem tem acesso ao objeto BellezaSystem
+    /// contorna tudo apenas nao abrindo sessao. numa versao real isso
+    /// exigiria autenticacao no servidor, e nao no proprio modelo
+    virtual bool temPermissao(Permissao permissao) const = 0;
+
+    /// grava as preferencias de um cliente: profissional preferido e
+    /// observacoes (alergias, produtos restritos, horario favorito).
+    /// profissionalPreferidoId vazio limpa a preferencia; se vier
+    /// preenchido, o profissional precisa existir. lanca excecao se o
+    /// usuario nao existir ou nao for do papel Cliente
+    virtual Usuario* definirPreferencias(const std::string& clienteId, const std::string& profissionalPreferidoId, const std::string& observacoes) = 0;
 
     virtual Servico* cadastrarServico(std::string id, std::string nome, double preco, std::chrono::minutes duracao, double percentualComissao) = 0;
 
@@ -88,7 +119,7 @@ public:
 
     virtual const Financeiro& financeiro() const = 0;
 
-    /// persistencia simples em arquivo texto para o prototipos
+    /// persistencia simples em arquivo texto para o prototipo
     virtual void salvarEmArquivo(const std::string& caminho) const = 0;
     virtual void carregarDeArquivo(const std::string& caminho) = 0;
 

@@ -43,6 +43,21 @@ void UsuarioHandle::setEmail(const std::string& email)
     pImpl_->email = email;
 }
 
+const std::string& UsuarioHandle::profissionalPreferidoId() const { return pImpl_->profissionalPreferidoId; }
+const std::string& UsuarioHandle::observacoes() const { return pImpl_->observacoes; }
+
+// string vazia e valida: significa que o cliente nao tem preferencia. quem
+// confere se o profissional existe mesmo e BellezaSystem::definirPreferencias
+void UsuarioHandle::setProfissionalPreferidoId(const std::string& profissionalId)
+{
+    pImpl_->profissionalPreferidoId = profissionalId;
+}
+
+void UsuarioHandle::setObservacoes(const std::string& observacoes)
+{
+    pImpl_->observacoes = observacoes;
+}
+
 // compara a senha informada com a senha guardada no body
 bool UsuarioHandle::autenticar(const std::string& senha) const
 {

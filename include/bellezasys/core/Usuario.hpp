@@ -22,6 +22,19 @@ public:
     virtual void setNome(const std::string& nome) = 0;
     virtual void setEmail(const std::string& email) = 0;
 
+    /// id do profissional que o cliente prefere ser atendido; string vazia
+    /// quando ele nao tem preferencia
+    virtual const std::string& profissionalPreferidoId() const = 0;
+
+    /// texto livre com observacoes do cliente (alergias, produtos que nao
+    /// pode usar, horario que costuma preferir)
+    virtual const std::string& observacoes() const = 0;
+
+    /// quem valida se o profissional existe e o BellezaSystem; aqui a troca
+    /// e direta, e a string vazia significa "sem preferencia"
+    virtual void setProfissionalPreferidoId(const std::string& profissionalId) = 0;
+    virtual void setObservacoes(const std::string& observacoes) = 0;
+
     /// confere se a senha informada bate com a senha cadastrada
     virtual bool autenticar(const std::string& senha) const = 0;
 

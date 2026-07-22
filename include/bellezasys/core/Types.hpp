@@ -16,6 +16,24 @@ enum class Papel {
     Administrador
 };
 
+/// acao controlada por perfil. o papel do usuario da sessao decide quais
+/// destas ele pode executar (ver BellezaSystem::temPermissao)
+enum class Permissao {
+    /// criar servicos, profissionais e usuarios
+    GerenciarCadastros,
+    /// mexer no cadastro e nas preferencias de outros clientes
+    GerenciarClientes,
+    /// criar, remarcar ou cancelar agendamento de outra pessoa
+    AgendarParaTerceiros,
+    /// marcar um atendimento como concluido (gera caixa e comissao)
+    ConcluirAtendimento,
+    /// consultar caixa, comissoes e relatorios
+    VerFinanceiro
+};
+
+/// converte a permissao para um texto legivel
+std::string toString(Permissao permissao);
+
 /// situacao atual de um agendamento ao longo do seu ciclo de vida
 enum class StatusAgendamento {
     Agendado,
