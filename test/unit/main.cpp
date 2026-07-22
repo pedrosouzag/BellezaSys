@@ -6,6 +6,7 @@
 #include "unit_Agendamento.hpp"
 #include "unit_Financeiro.hpp"
 #include "unit_BellezaSystem.hpp"
+#include "unit_Chatbot.hpp"
 
 #include <iostream>
 
@@ -32,6 +33,9 @@ int main() {
 
     Unit_BellezaSystem::run_unit_tests_BellezaSystem();
     cout << "all BellezaSystem unit tests passed" << endl;
+
+    Unit_Chatbot::run_unit_tests_Chatbot();
+    cout << "all Chatbot unit tests passed" << endl;
 
     return 0;
 }

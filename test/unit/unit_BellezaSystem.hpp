@@ -32,6 +32,13 @@ public:
     static bool unit_BellezaSystem_agendamentosDoClienteEDoProfissional();
     static bool unit_BellezaSystem_agendaDoProfissionalNoDia();
     static bool unit_BellezaSystem_persistenciaArquivo();
+    static bool unit_BellezaSystem_sessao();
+    static bool unit_BellezaSystem_permissoesPorPapel();
+    static bool unit_BellezaSystem_permissoesBloqueiamCliente();
+    static bool unit_BellezaSystem_clienteMexeNoProprioDado();
+    static bool unit_BellezaSystem_carregarEncerraSessao();
+    static bool unit_BellezaSystem_definirPreferencias();
+    static bool unit_BellezaSystem_persistenciaPreferencias();
 
     /// confere a gestao de memoria dos objetos Handle e Body de BellezaSystem
     static bool unit_BellezaSystem_handleBodyTest();

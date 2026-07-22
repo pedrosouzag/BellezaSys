@@ -14,6 +14,9 @@ public:
     static bool unit_Financeiro_assignmentOperator();
 
     static bool unit_Financeiro_registrarPagamento();
+    static bool unit_Financeiro_dataDoLancamento();
+    static bool unit_Financeiro_relatorioPorPeriodo();
+    static bool unit_Financeiro_relatorioPorProfissional();
     static bool unit_Financeiro_registrarPagamento_validacoes();
     static bool unit_Financeiro_saldoETotalComissoes();
 
