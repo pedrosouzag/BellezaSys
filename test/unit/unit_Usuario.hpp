@@ -17,6 +17,7 @@ public:
     static bool unit_Usuario_getters();
     static bool unit_Usuario_setNome();
     static bool unit_Usuario_setEmail();
+    static bool unit_Usuario_preferencias();
     static bool unit_Usuario_autenticar();
     static bool unit_Usuario_alterarSenha();
     static bool unit_Usuario_validacaoConstrutor();

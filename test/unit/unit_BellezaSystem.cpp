@@ -348,6 +348,268 @@ bool Unit_BellezaSystem::unit_BellezaSystem_persistenciaArquivo() {
     return true;
 }
 
+// confere as regras de definirPreferencias
+bool Unit_BellezaSystem::unit_BellezaSystem_definirPreferencias() {
+    BellezaSystem* system = montarCenarioBasico();
+
+    Usuario* cliente = system->definirPreferencias("CLI-1", "PRO-1", "Prefere sabado de manha.");
+    assert(cliente->profissionalPreferidoId() == "PRO-1");
+    assert(cliente->observacoes() == "Prefere sabado de manha.");
+
+    // id vazio limpa a preferencia sem apagar as observacoes
+    system->definirPreferencias("CLI-1", "", "Prefere sabado de manha.");
+    assert(cliente->profissionalPreferidoId() == "");
+    assert(cliente->observacoes() == "Prefere sabado de manha.");
+
+    // profissional que nao existe e recusado
+    bool lancouProfissional = false;
+    try {
+        system->definirPreferencias("CLI-1", "PRO-INEXISTENTE", "");
+    } catch (const std::exception&) {
+        lancouProfissional = true;
+    }
+    assert(lancouProfissional);
+
+    // cliente que nao existe e recusado
+    bool lancouCliente = false;
+    try {
+        system->definirPreferencias("CLI-NAO-EXISTE", "PRO-1", "");
+    } catch (const std::exception&) {
+        lancouCliente = true;
+    }
+    assert(lancouCliente);
+
+    // preferencia so vale para o papel Cliente
+    system->cadastrarUsuario("ADM-9", "Chefe", "chefe@belleza.com", "x", Papel::Administrador);
+    bool lancouPapel = false;
+    try {
+        system->definirPreferencias("ADM-9", "PRO-1", "");
+    } catch (const std::invalid_argument&) {
+        lancouPapel = true;
+    }
+    assert(lancouPapel);
+
+    BellezaSystem::deleteModel(system);
+    return true;
+}
+
+// confere que as preferencias sobrevivem ao salvar/carregar, inclusive com
+// caracteres que precisam de escape no arquivo
+bool Unit_BellezaSystem::unit_BellezaSystem_persistenciaPreferencias() {
+    const char* caminho = "bin/unit_bellezasys_preferencias.db";
+    std::remove(caminho);
+
+    BellezaSystem* origem = montarCenarioBasico();
+    origem->cadastrarUsuario("CLI-2", "Joao", "joao@email.com", "abc", Papel::Cliente);
+    // tab e quebra de linha no texto exercitam o escape do arquivo
+    origem->definirPreferencias("CLI-1", "PRO-1", "Alergia a amonia.\tEvitar\nquimica forte.");
+    origem->salvarEmArquivo(caminho);
+
+    BellezaSystem* carregado = BellezaSystem::createModel();
+    carregado->carregarDeArquivo(caminho);
+
+    Usuario* cli1 = nullptr;
+    Usuario* cli2 = nullptr;
+    for (auto it = carregado->usuariosBegin(); it != carregado->usuariosEnd(); ++it) {
+        if ((*it)->id() == "CLI-1") {
+            cli1 = *it;
+        } else if ((*it)->id() == "CLI-2") {
+            cli2 = *it;
+        }
+    }
+
+    assert(cli1 != nullptr);
+    assert(cli1->profissionalPreferidoId() == "PRO-1");
+    assert(cli1->observacoes() == "Alergia a amonia.\tEvitar\nquimica forte.");
+
+    // quem nao tem preferencia continua sem, e nao vira linha no arquivo
+    assert(cli2 != nullptr);
+    assert(cli2->profissionalPreferidoId() == "");
+    assert(cli2->observacoes() == "");
+
+    BellezaSystem::deleteModel(origem);
+    BellezaSystem::deleteModel(carregado);
+    std::remove(caminho);
+    return true;
+}
+
+// confere abertura, consulta e encerramento de sessao
+bool Unit_BellezaSystem::unit_BellezaSystem_sessao() {
+    BellezaSystem* system = montarCenarioBasico();
+
+    // sem sessao, ninguem esta logado e tudo e permitido (modo interno)
+    assert(system->usuarioDaSessao() == nullptr);
+    assert(system->temPermissao(Permissao::GerenciarCadastros));
+
+    Usuario* logado = system->iniciarSessao("marina@email.com", "123");
+    assert(logado->id() == "CLI-1");
+    assert(system->usuarioDaSessao() == logado);
+
+    system->encerrarSessao();
+    assert(system->usuarioDaSessao() == nullptr);
+
+    // senha errada e email inexistente nao abrem sessao
+    bool lancouSenha = false;
+    try {
+        system->iniciarSessao("marina@email.com", "errada");
+    } catch (const std::invalid_argument&) {
+        lancouSenha = true;
+    }
+    assert(lancouSenha);
+    assert(system->usuarioDaSessao() == nullptr);
+
+    bool lancouEmail = false;
+    try {
+        system->iniciarSessao("ninguem@email.com", "123");
+    } catch (const std::invalid_argument&) {
+        lancouEmail = true;
+    }
+    assert(lancouEmail);
+
+    BellezaSystem::deleteModel(system);
+    return true;
+}
+
+// confere a tabela de permissoes de cada papel
+bool Unit_BellezaSystem::unit_BellezaSystem_permissoesPorPapel() {
+    BellezaSystem* system = montarCenarioBasico();
+    system->cadastrarUsuario("FUN-1", "Bia", "bia@belleza.com", "123", Papel::Funcionario);
+    system->cadastrarUsuario("ADM-1", "Carla", "carla@belleza.com", "123", Papel::Administrador);
+
+    // cliente nao tem nenhuma permissao sobre terceiros
+    system->iniciarSessao("marina@email.com", "123");
+    assert(!system->temPermissao(Permissao::GerenciarCadastros));
+    assert(!system->temPermissao(Permissao::GerenciarClientes));
+    assert(!system->temPermissao(Permissao::AgendarParaTerceiros));
+    assert(!system->temPermissao(Permissao::ConcluirAtendimento));
+    assert(!system->temPermissao(Permissao::VerFinanceiro));
+
+    // funcionario atende e cuida da agenda, mas nao mexe no catalogo
+    system->iniciarSessao("bia@belleza.com", "123");
+    assert(!system->temPermissao(Permissao::GerenciarCadastros));
+    assert(system->temPermissao(Permissao::GerenciarClientes));
+    assert(system->temPermissao(Permissao::AgendarParaTerceiros));
+    assert(system->temPermissao(Permissao::ConcluirAtendimento));
+    assert(system->temPermissao(Permissao::VerFinanceiro));
+
+    // administrador pode tudo
+    system->iniciarSessao("carla@belleza.com", "123");
+    assert(system->temPermissao(Permissao::GerenciarCadastros));
+    assert(system->temPermissao(Permissao::VerFinanceiro));
+
+    BellezaSystem::deleteModel(system);
+    return true;
+}
+
+// confere que as operacoes controladas recusam mesmo o cliente logado
+bool Unit_BellezaSystem::unit_BellezaSystem_permissoesBloqueiamCliente() {
+    BellezaSystem* system = montarCenarioBasico();
+    system->cadastrarUsuario("CLI-2", "Joao", "joao@email.com", "123", Papel::Cliente);
+    Agendamento* doOutro = system->agendar("CLI-2", "PRO-1", "SER-CORTE", makeDateTime(2026, 7, 7, 14, 0));
+
+    system->iniciarSessao("marina@email.com", "123");
+
+    // catalogo e cadastro sao do administrador
+    bool bloqueouServico = false;
+    try {
+        system->cadastrarServico("SER-X", "Escova", 40.0, std::chrono::minutes(30), 0.2);
+    } catch (const std::logic_error&) {
+        bloqueouServico = true;
+    }
+    assert(bloqueouServico);
+
+    bool bloqueouUsuario = false;
+    try {
+        system->cadastrarUsuario("CLI-9", "Fake", "fake@email.com", "123", Papel::Cliente);
+    } catch (const std::logic_error&) {
+        bloqueouUsuario = true;
+    }
+    assert(bloqueouUsuario);
+
+    // concluir gera caixa, entao o cliente nao pode
+    Agendamento* proprio = system->agendar("CLI-1", "PRO-1", "SER-CORTE", makeDateTime(2026, 7, 7, 16, 0));
+    bool bloqueouConcluir = false;
+    try {
+        system->concluirAgendamento(proprio->id());
+    } catch (const std::logic_error&) {
+        bloqueouConcluir = true;
+    }
+    assert(bloqueouConcluir);
+
+    // o financeiro tambem nao e do cliente
+    bool bloqueouFinanceiro = false;
+    try {
+        (void)system->financeiro().saldo();
+    } catch (const std::logic_error&) {
+        bloqueouFinanceiro = true;
+    }
+    assert(bloqueouFinanceiro);
+
+    // e nao pode encostar na agenda de outro cliente
+    bool bloqueouCancelarDeOutro = false;
+    try {
+        system->cancelarAgendamento(doOutro->id());
+    } catch (const std::logic_error&) {
+        bloqueouCancelarDeOutro = true;
+    }
+    assert(bloqueouCancelarDeOutro);
+    assert(doOutro->estaAtivo());
+
+    bool bloqueouAgendarParaOutro = false;
+    try {
+        system->agendar("CLI-2", "PRO-1", "SER-CORTE", makeDateTime(2026, 7, 8, 10, 0));
+    } catch (const std::logic_error&) {
+        bloqueouAgendarParaOutro = true;
+    }
+    assert(bloqueouAgendarParaOutro);
+
+    BellezaSystem::deleteModel(system);
+    return true;
+}
+
+// confere que o cliente continua dono do proprio dado
+bool Unit_BellezaSystem::unit_BellezaSystem_clienteMexeNoProprioDado() {
+    BellezaSystem* system = montarCenarioBasico();
+    system->iniciarSessao("marina@email.com", "123");
+
+    // marca, remarca e cancela para si mesmo, sem precisar de permissao
+    Agendamento* meu = system->agendar("CLI-1", "PRO-1", "SER-CORTE", makeDateTime(2026, 7, 7, 15, 0));
+    system->remarcarAgendamento(meu->id(), makeDateTime(2026, 7, 7, 16, 0));
+    system->cancelarAgendamento(meu->id());
+    assert(meu->status() == StatusAgendamento::Cancelado);
+
+    // e ajusta as proprias preferencias
+    Usuario* eu = system->definirPreferencias("CLI-1", "PRO-1", "Prefere manha.");
+    assert(eu->profissionalPreferidoId() == "PRO-1");
+
+    BellezaSystem::deleteModel(system);
+    return true;
+}
+
+// confere que carregar um arquivo derruba a sessao antes de trocar a base
+bool Unit_BellezaSystem::unit_BellezaSystem_carregarEncerraSessao() {
+    const char* caminho = "bin/unit_bellezasys_sessao.db";
+    std::remove(caminho);
+
+    BellezaSystem* origem = montarCenarioBasico();
+    origem->salvarEmArquivo(caminho);
+
+    BellezaSystem* destino = montarCenarioBasico();
+    destino->iniciarSessao("marina@email.com", "123");
+    assert(destino->usuarioDaSessao() != nullptr);
+
+    // sem encerrar a sessao, a carga esbarraria nas proprias permissoes e a
+    // sessao ficaria apontando para um usuario ja deletado
+    destino->carregarDeArquivo(caminho);
+    assert(destino->usuarioDaSessao() == nullptr);
+    assert(std::distance(destino->usuariosBegin(), destino->usuariosEnd()) == 1);
+
+    BellezaSystem::deleteModel(origem);
+    BellezaSystem::deleteModel(destino);
+    std::remove(caminho);
+    return true;
+}
+
 // confere a gestao de memoria: quantos handles e bodies sao criados e
 // destruidos ao copiar e destruir um BellezaSystemHandle
 bool Unit_BellezaSystem::unit_BellezaSystem_handleBodyTest() {
@@ -416,6 +678,13 @@ bool Unit_BellezaSystem::run_unit_tests_BellezaSystem() {
     assert(unit_BellezaSystem_agendamentosDoClienteEDoProfissional());
     assert(unit_BellezaSystem_agendaDoProfissionalNoDia());
     assert(unit_BellezaSystem_persistenciaArquivo());
+    assert(unit_BellezaSystem_sessao());
+    assert(unit_BellezaSystem_permissoesPorPapel());
+    assert(unit_BellezaSystem_permissoesBloqueiamCliente());
+    assert(unit_BellezaSystem_clienteMexeNoProprioDado());
+    assert(unit_BellezaSystem_carregarEncerraSessao());
+    assert(unit_BellezaSystem_definirPreferencias());
+    assert(unit_BellezaSystem_persistenciaPreferencias());
 
     assert(unit_BellezaSystem_handleBodyTest());
 

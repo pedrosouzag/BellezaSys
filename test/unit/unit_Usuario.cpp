@@ -114,6 +114,26 @@ bool Unit_Usuario::unit_Usuario_setEmail() {
     return true;
 }
 
+// confere que as preferencias comecam vazias e podem ser trocadas
+bool Unit_Usuario::unit_Usuario_preferencias() {
+    UsuarioHandle usuario("U1", "Ana", "ana@teste.com", "123", Papel::Cliente);
+
+    // cliente novo nasce sem preferencia nenhuma
+    assert(usuario.profissionalPreferidoId() == "");
+    assert(usuario.observacoes() == "");
+
+    usuario.setProfissionalPreferidoId("PRO-1");
+    usuario.setObservacoes("Alergia a amonia.");
+    assert(usuario.pImpl_->profissionalPreferidoId == "PRO-1");
+    assert(usuario.pImpl_->observacoes == "Alergia a amonia.");
+
+    // string vazia e valida: limpa a preferencia
+    usuario.setProfissionalPreferidoId("");
+    assert(usuario.profissionalPreferidoId() == "");
+
+    return true;
+}
+
 // confere que autenticar valida a senha certa e rejeita a errada
 bool Unit_Usuario::unit_Usuario_autenticar() {
     UsuarioHandle usuario("U1", "Ana", "ana@teste.com", "123", Papel::Cliente);
@@ -199,6 +219,7 @@ bool Unit_Usuario::run_unit_tests_Usuario() {
     assert(unit_Usuario_getters());
     assert(unit_Usuario_setNome());
     assert(unit_Usuario_setEmail());
+    assert(unit_Usuario_preferencias());
     assert(unit_Usuario_autenticar());
     assert(unit_Usuario_alterarSenha());
     assert(unit_Usuario_validacaoConstrutor());
