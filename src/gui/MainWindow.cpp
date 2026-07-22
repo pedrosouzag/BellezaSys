@@ -1,6 +1,9 @@
 #include "MainWindow.hpp"
 
+#include "OllamaLlmClient.hpp"
+
 #include <QAbstractItemView>
+#include <QApplication>
 #include <QComboBox>
 #include <QDateEdit>
 #include <QDateTime>
@@ -19,12 +22,15 @@
 #include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QScrollBar>
+#include <QSignalBlocker>
 #include <QSpinBox>
 #include <QStringList>
 #include <QStackedWidget>
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QTextEdit>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -68,7 +74,7 @@ QLabel* titulo(const QString& texto)
     return label;
 }
 
-// cria um item de tabela somente read (nao editavel pelo usuario)
+// cria um item de tabela somente leitura (nao editavel pelo usuario)
 QTableWidgetItem* item(const QString& text)
 {
     auto* tableItem = new QTableWidgetItem(text);
@@ -87,12 +93,23 @@ MainWindow::MainWindow(QWidget* parent)
     system_ = BellezaSystem::createModel();
 
     carregarDadosPersistidosOuDemo();
+
+    // tenta subir o modelo local; se o Ollama nao estiver rodando, o
+    // OllamaLlmClient reporta indisponivel e o Chatbot cai sozinho no
+    // interpretador por palavra-chave, sem quebrar a interface
+    llm_ = std::make_unique<OllamaLlmClient>();
+    chatbot_ = std::make_unique<ChatbotHandle>(system_, llm_.get());
+
     construirInterface();
     atualizarTudo();
 }
 
 MainWindow::~MainWindow()
 {
+    // o assistente aponta pro sistema e pro modelo, entao sai de cena antes
+    chatbot_.reset();
+    llm_.reset();
+
     // desregistra e destroi o sistema (e tudo que ele possui)
     BellezaSystem::deleteModel(system_);
 }
@@ -264,6 +281,8 @@ QWidget* MainWindow::criarTelaCliente()
     meusLayout->addLayout(actions);
     root->addWidget(meusBox);
 
+    root->addWidget(criarPainelAssistente(page));
+
     connect(sairButton, &QPushButton::clicked, this, [this]() { sair(); });
     connect(consultarButton, &QPushButton::clicked, this, [this]() { atualizarProfissionaisCliente(); });
     connect(agendarButton, &QPushButton::clicked, this, [this]() { clienteCriarAgendamento(); });
@@ -273,6 +292,134 @@ QWidget* MainWindow::criarTelaCliente()
     connect(clienteDataHoraInput_, &QDateTimeEdit::dateTimeChanged, this, [this]() { atualizarProfissionaisCliente(); });
 
     return page;
+}
+
+// monta o painel do assistente virtual: conversa somente leitura, campo de
+// texto e sugestoes de perguntas
+QWidget* MainWindow::criarPainelAssistente(QWidget* parent)
+{
+    auto* box = new QGroupBox("Assistente virtual", parent);
+    auto* layout = new QVBoxLayout(box);
+
+    assistenteStatusLabel_ = new QLabel(box);
+    assistenteStatusLabel_->setWordWrap(true);
+    layout->addWidget(assistenteStatusLabel_);
+
+    assistenteConversa_ = new QTextEdit(box);
+    assistenteConversa_->setReadOnly(true);
+    assistenteConversa_->setMinimumHeight(160);
+    layout->addWidget(assistenteConversa_);
+
+    auto* linha = new QHBoxLayout();
+    assistenteEntrada_ = new QLineEdit(box);
+    assistenteEntrada_->setPlaceholderText("Ex.: quais servicos voces tem?");
+    assistenteEnviarButton_ = new QPushButton("Enviar", box);
+    auto* limparButton = new QPushButton("Limpar conversa", box);
+    linha->addWidget(assistenteEntrada_);
+    linha->addWidget(assistenteEnviarButton_);
+    linha->addWidget(limparButton);
+    layout->addLayout(linha);
+
+    // atalhos para a demonstracao: preenchem o campo com perguntas prontas
+    auto* sugestoes = new QHBoxLayout();
+    const QStringList exemplos = { "Quais servicos voces tem?",
+        "Tem horario livre para corte amanha de manha?",
+        "Quais sao os meus agendamentos?" };
+    for (const QString& exemplo : exemplos) {
+        auto* atalho = new QPushButton(exemplo, box);
+        connect(atalho, &QPushButton::clicked, this, [this, exemplo]() {
+            assistenteEntrada_->setText(exemplo);
+            assistenteEnviarMensagem();
+        });
+        sugestoes->addWidget(atalho);
+    }
+    layout->addLayout(sugestoes);
+
+    connect(assistenteEnviarButton_, &QPushButton::clicked, this, [this]() { assistenteEnviarMensagem(); });
+    connect(assistenteEntrada_, &QLineEdit::returnPressed, this, [this]() { assistenteEnviarMensagem(); });
+    connect(limparButton, &QPushButton::clicked, this, [this]() {
+        chatbot_->limparHistorico();
+        atualizarConversaAssistente();
+    });
+
+    atualizarStatusAssistente();
+    return box;
+}
+
+void MainWindow::atualizarStatusAssistente()
+{
+    if (assistenteStatusLabel_ == nullptr) {
+        return;
+    }
+
+    if (chatbot_->usandoModelo()) {
+        assistenteStatusLabel_->setText(
+            QString("Modelo local ativo: %1").arg(QString::fromStdString(chatbot_->descricaoMotor())));
+        return;
+    }
+
+    // sem Ollama o assistente continua util, entao o aviso explica como
+    // ligar o modelo em vez de esconder a funcionalidade
+    QString motivo = llm_ ? llm_->ultimoErro() : QString();
+    if (motivo.isEmpty()) {
+        motivo = "Modelo local nao encontrado.";
+    }
+    assistenteStatusLabel_->setText(
+        QString("Modo palavras-chave. %1\nPara ligar a IA local: instale o Ollama, rode "
+                "\"ollama pull llama3.2:3b\" e \"ollama serve\".")
+            .arg(motivo));
+}
+
+void MainWindow::assistenteEnviarMensagem()
+{
+    const QString mensagem = assistenteEntrada_->text().trimmed();
+    if (mensagem.isEmpty()) {
+        return;
+    }
+
+    assistenteEntrada_->clear();
+
+    // a chamada ao modelo e sincrona: trava a entrada e mostra o cursor de
+    // espera para a janela nao parecer congelada enquanto o Ollama responde
+    assistenteEnviarButton_->setEnabled(false);
+    assistenteEntrada_->setEnabled(false);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    try {
+        chatbot_->responder(mensagem.toStdString(), usuarioLogadoId_.toStdString());
+    } catch (const std::exception& erro) {
+        QApplication::restoreOverrideCursor();
+        assistenteEnviarButton_->setEnabled(true);
+        assistenteEntrada_->setEnabled(true);
+        exibirErro("Assistente", erro);
+        return;
+    }
+
+    QApplication::restoreOverrideCursor();
+    assistenteEnviarButton_->setEnabled(true);
+    assistenteEntrada_->setEnabled(true);
+    assistenteEntrada_->setFocus();
+
+    atualizarConversaAssistente();
+    atualizarStatusAssistente();
+}
+
+void MainWindow::atualizarConversaAssistente()
+{
+    if (assistenteConversa_ == nullptr) {
+        return;
+    }
+
+    QString texto;
+    for (auto it = chatbot_->historicoBegin(); it != chatbot_->historicoEnd(); ++it) {
+        const QString autor = (it->autor == AutorMensagem::Cliente) ? "Voce" : "Assistente";
+        texto += QString("%1: %2\n\n").arg(autor, QString::fromStdString(it->texto));
+    }
+
+    assistenteConversa_->setPlainText(texto);
+    // rola pro fim para a ultima resposta ficar visivel
+    assistenteConversa_->verticalScrollBar()->setValue(
+        assistenteConversa_->verticalScrollBar()->maximum());
 }
 
 // monta a tela do administrador: cartoes de resumo + abas de agenda
@@ -426,9 +573,30 @@ QWidget* MainWindow::criarTelaAdministrador()
     formsLayout->addWidget(profissionalBox, 0, 2);
     cadastrosLayout->addLayout(formsLayout);
 
+    // preferencias ficam num box proprio: o cliente ja precisa existir para
+    // ter preferencia, entao nao cabe no formulario de cadastro
+    auto* preferenciasBox = new QGroupBox("Preferências do cliente", cadastrosTab);
+    auto* preferenciasLayout = new QGridLayout(preferenciasBox);
+    adminPrefClienteCombo_ = new QComboBox(preferenciasBox);
+    adminPrefProfissionalCombo_ = new QComboBox(preferenciasBox);
+    adminPrefObservacoesInput_ = new QLineEdit(preferenciasBox);
+    adminPrefObservacoesInput_->setPlaceholderText("Alergias, produtos a evitar, horário que costuma preferir...");
+    auto* salvarPreferenciasButton = new QPushButton("Salvar preferências", preferenciasBox);
+    preferenciasLayout->addWidget(new QLabel("Cliente"), 0, 0);
+    preferenciasLayout->addWidget(adminPrefClienteCombo_, 0, 1);
+    preferenciasLayout->addWidget(new QLabel("Profissional preferido"), 0, 2);
+    preferenciasLayout->addWidget(adminPrefProfissionalCombo_, 0, 3);
+    preferenciasLayout->addWidget(new QLabel("Observações"), 1, 0);
+    preferenciasLayout->addWidget(adminPrefObservacoesInput_, 1, 1, 1, 2);
+    preferenciasLayout->addWidget(salvarPreferenciasButton, 1, 3);
+    cadastrosLayout->addWidget(preferenciasBox);
+
+    connect(salvarPreferenciasButton, &QPushButton::clicked, this, [this]() { adminSalvarPreferencias(); });
+    connect(adminPrefClienteCombo_, &QComboBox::currentIndexChanged, this, [this]() { adminCarregarPreferencias(); });
+
     auto* tabelasLayout = new QGridLayout();
-    adminClientesTable_ = new QTableWidget(0, 4, cadastrosTab);
-    adminClientesTable_->setHorizontalHeaderLabels({"ID", "Nome", "Email", "Perfil"});
+    adminClientesTable_ = new QTableWidget(0, 6, cadastrosTab);
+    adminClientesTable_->setHorizontalHeaderLabels({"ID", "Nome", "Email", "Perfil", "Preferido", "Observações"});
     adminClientesTable_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     adminServicosTable_ = new QTableWidget(0, 4, cadastrosTab);
     adminServicosTable_->setHorizontalHeaderLabels({"ID", "Serviço", "Preço", "Duração"});
@@ -474,6 +642,54 @@ QWidget* MainWindow::criarTelaAdministrador()
     financeiroLayout->addStretch();
     tabs->addTab(financeiroTab, "Financeiro");
 
+    auto* relatorioTab = new QWidget(tabs);
+    auto* relatorioLayout = new QVBoxLayout(relatorioTab);
+
+    auto* periodoBox = new QGroupBox("Período", relatorioTab);
+    auto* periodoLayout = new QHBoxLayout(periodoBox);
+    adminRelInicioInput_ = new QDateEdit(QDate(2026, 7, 1), periodoBox);
+    adminRelInicioInput_->setCalendarPopup(true);
+    adminRelInicioInput_->setDisplayFormat("dd/MM/yyyy");
+    adminRelFimInput_ = new QDateEdit(QDate(2026, 7, 31), periodoBox);
+    adminRelFimInput_->setCalendarPopup(true);
+    adminRelFimInput_->setDisplayFormat("dd/MM/yyyy");
+    auto* gerarRelatorioButton = new QPushButton("Gerar relatório", periodoBox);
+    // atalhos porque na demonstracao ninguem quer digitar data
+    auto* mesAtualButton = new QPushButton("Julho/2026", periodoBox);
+    auto* tudoButton = new QPushButton("Ano inteiro", periodoBox);
+    periodoLayout->addWidget(new QLabel("De"));
+    periodoLayout->addWidget(adminRelInicioInput_);
+    periodoLayout->addWidget(new QLabel("até"));
+    periodoLayout->addWidget(adminRelFimInput_);
+    periodoLayout->addWidget(gerarRelatorioButton);
+    periodoLayout->addWidget(mesAtualButton);
+    periodoLayout->addWidget(tudoButton);
+    periodoLayout->addStretch();
+    relatorioLayout->addWidget(periodoBox);
+
+    adminRelResumoLabel_ = new QLabel(relatorioTab);
+    adminRelResumoLabel_->setTextFormat(Qt::PlainText);
+    relatorioLayout->addWidget(adminRelResumoLabel_);
+
+    relatorioLayout->addWidget(new QLabel("Desempenho por profissional no período"));
+    adminRelProfissionaisTable_ = new QTableWidget(0, 4, relatorioTab);
+    adminRelProfissionaisTable_->setHorizontalHeaderLabels({"Profissional", "Atendimentos", "Valor gerado", "Comissões"});
+    adminRelProfissionaisTable_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    relatorioLayout->addWidget(adminRelProfissionaisTable_);
+    tabs->addTab(relatorioTab, "Relatórios");
+
+    connect(gerarRelatorioButton, &QPushButton::clicked, this, [this]() { atualizarRelatorioAdmin(); });
+    connect(mesAtualButton, &QPushButton::clicked, this, [this]() {
+        adminRelInicioInput_->setDate(QDate(2026, 7, 1));
+        adminRelFimInput_->setDate(QDate(2026, 7, 31));
+        atualizarRelatorioAdmin();
+    });
+    connect(tudoButton, &QPushButton::clicked, this, [this]() {
+        adminRelInicioInput_->setDate(QDate(2026, 1, 1));
+        adminRelFimInput_->setDate(QDate(2026, 12, 31));
+        atualizarRelatorioAdmin();
+    });
+
     root->addWidget(tabs);
 
     connect(sairButton, &QPushButton::clicked, this, [this]() { sair(); });
@@ -499,23 +715,27 @@ void MainWindow::autenticarUsuario()
 {
     const QString email = emailInput_->text();
     const QString senha = senhaInput_->text();
-    if (!system_->login(email.toStdString(), senha.toStdString())) {
-        loginStatus_->setText("Email ou senha inválidos.");
-        return;
-    }
 
-    for (auto it = system_->usuariosBegin(); it != system_->usuariosEnd(); ++it) {
-        Usuario* usuario = *it;
-        if (usuario->email() == email.toStdString()) {
-            aplicarPerfilLogado(*usuario);
-            return;
-        }
+    // iniciarSessao (e nao login) porque e ela que liga o controle de
+    // acesso por perfil dentro do core
+    try {
+        Usuario* usuario = system_->iniciarSessao(email.toStdString(), senha.toStdString());
+        aplicarPerfilLogado(*usuario);
+    } catch (const std::exception&) {
+        loginStatus_->setText("Email ou senha inválidos.");
     }
 }
 
 void MainWindow::sair()
 {
+    system_->encerrarSessao();
     usuarioLogadoId_.clear();
+
+    // a conversa cita agendamentos do cliente, entao nao pode sobrar na
+    // tela para quem entrar depois
+    chatbot_->limparHistorico();
+    atualizarConversaAssistente();
+
     loginStatus_->setText("Sessão encerrada. Escolha outro perfil para continuar a demonstração.");
     stack_->setCurrentIndex(0);
 }
@@ -551,15 +771,25 @@ void MainWindow::preencherCombosCliente()
 void MainWindow::preencherCombosAdmin()
 {
     const QString profissionalFiltroAtual = comboIdAtual(adminFiltroProfissionalCombo_);
+    const QString prefClienteAtual = comboIdAtual(adminPrefClienteCombo_);
     adminClienteCombo_->clear();
     adminServicoCombo_->clear();
     adminFiltroProfissionalCombo_->clear();
     adminProfissionalServicosList_->clear();
 
+    // enquanto os combos sao repovoados, currentIndexChanged dispara varias
+    // vezes; sem bloquear o sinal, adminCarregarPreferencias() rodaria com o
+    // combo pela metade e limparia o formulario
+    const QSignalBlocker bloqueio(adminPrefClienteCombo_);
+    adminPrefClienteCombo_->clear();
+    adminPrefProfissionalCombo_->clear();
+    adminPrefProfissionalCombo_->addItem("(sem preferência)", QString());
+
     for (auto it = system_->usuariosBegin(); it != system_->usuariosEnd(); ++it) {
         Usuario* usuario = *it;
         if (usuario->papel() == Papel::Cliente) {
             adminClienteCombo_->addItem(QString::fromStdString(usuario->nome()), QString::fromStdString(usuario->id()));
+            adminPrefClienteCombo_->addItem(QString::fromStdString(usuario->nome()), QString::fromStdString(usuario->id()));
         }
     }
 
@@ -576,11 +806,63 @@ void MainWindow::preencherCombosAdmin()
     for (auto it = system_->profissionaisBegin(); it != system_->profissionaisEnd(); ++it) {
         Profissional* profissional = *it;
         adminFiltroProfissionalCombo_->addItem(QString::fromStdString(profissional->nome()), QString::fromStdString(profissional->id()));
+        adminPrefProfissionalCombo_->addItem(QString::fromStdString(profissional->nome()), QString::fromStdString(profissional->id()));
     }
 
     const int filtroIndex = adminFiltroProfissionalCombo_->findData(profissionalFiltroAtual);
     if (filtroIndex >= 0) {
         adminFiltroProfissionalCombo_->setCurrentIndex(filtroIndex);
+    }
+
+    const int prefIndex = adminPrefClienteCombo_->findData(prefClienteAtual);
+    if (prefIndex >= 0) {
+        adminPrefClienteCombo_->setCurrentIndex(prefIndex);
+    }
+    adminCarregarPreferencias();
+}
+
+// le do core as preferencias do cliente selecionado e joga no formulario
+void MainWindow::adminCarregarPreferencias()
+{
+    const QString clienteId = comboIdAtual(adminPrefClienteCombo_);
+    if (clienteId.isEmpty()) {
+        adminPrefProfissionalCombo_->setCurrentIndex(0);
+        adminPrefObservacoesInput_->clear();
+        return;
+    }
+
+    for (auto it = system_->usuariosBegin(); it != system_->usuariosEnd(); ++it) {
+        Usuario* usuario = *it;
+        if (QString::fromStdString(usuario->id()) != clienteId) {
+            continue;
+        }
+
+        const int index = adminPrefProfissionalCombo_->findData(
+            QString::fromStdString(usuario->profissionalPreferidoId()));
+        // index 0 e "(sem preferência)": serve tambem quando o profissional
+        // preferido nao esta mais na lista
+        adminPrefProfissionalCombo_->setCurrentIndex(index >= 0 ? index : 0);
+        adminPrefObservacoesInput_->setText(QString::fromStdString(usuario->observacoes()));
+        return;
+    }
+}
+
+void MainWindow::adminSalvarPreferencias()
+{
+    const QString clienteId = comboIdAtual(adminPrefClienteCombo_);
+    if (clienteId.isEmpty()) {
+        QMessageBox::information(this, "Preferências", "Cadastre um cliente antes de definir preferências.");
+        return;
+    }
+
+    try {
+        system_->definirPreferencias(clienteId.toStdString(),
+            comboIdAtual(adminPrefProfissionalCombo_).toStdString(),
+            adminPrefObservacoesInput_->text().trimmed().toStdString());
+        salvarDadosSilenciosamente();
+        atualizarTudo();
+    } catch (const std::exception& erro) {
+        exibirErro("Preferências", erro);
     }
 }
 
@@ -639,6 +921,7 @@ void MainWindow::atualizarTudo()
     atualizarAgendaFiltradaAdmin();
     atualizarFinanceiroAdmin();
     atualizarResumoAdmin();
+    atualizarRelatorioAdmin();
 }
 
 // lista so os agendamentos do cliente logado
@@ -715,8 +998,70 @@ void MainWindow::atualizarAgendaFiltradaAdmin()
 // atualiza os cartoes de saldo de caixa e comissoes
 void MainWindow::atualizarFinanceiroAdmin()
 {
+    // com um cliente logado o core recusa o acesso ao financeiro, entao a
+    // tela nem tenta ler: mostra travessao no lugar do valor
+    if (!system_->temPermissao(Permissao::VerFinanceiro)) {
+        adminSaldoLabel_->setText("-");
+        adminComissaoLabel_->setText("-");
+        return;
+    }
+
     adminSaldoLabel_->setText(dinheiro(system_->financeiro().saldo()));
     adminComissaoLabel_->setText(dinheiro(system_->financeiro().totalComissoes()));
+}
+
+// monta o relatorio do periodo escolhido: consolidado em texto e quebra por
+// profissional na tabela
+void MainWindow::atualizarRelatorioAdmin()
+{
+    if (adminRelResumoLabel_ == nullptr) {
+        return;
+    }
+
+    if (!system_->temPermissao(Permissao::VerFinanceiro)) {
+        adminRelResumoLabel_->setText("Entre como funcionário ou administrador para ver os relatórios.");
+        adminRelProfissionaisTable_->setRowCount(0);
+        return;
+    }
+
+    // o fim do periodo vai ate o ultimo minuto do dia escolhido, senao um
+    // atendimento das 14h do dia final ficaria de fora
+    const DateTime inicio = fromQtDateTime(QDateTime(adminRelInicioInput_->date(), QTime(0, 0)));
+    const DateTime fim = fromQtDateTime(QDateTime(adminRelFimInput_->date(), QTime(23, 59)));
+
+    if (inicio > fim) {
+        adminRelResumoLabel_->setText("A data inicial não pode ser depois da data final.");
+        adminRelProfissionaisTable_->setRowCount(0);
+        return;
+    }
+
+    const Financeiro& financeiro = system_->financeiro();
+    const RelatorioFinanceiro relatorio = financeiro.relatorioPorPeriodo(inicio, fim);
+
+    adminRelResumoLabel_->setText(QString("Atendimentos concluídos: %1\nEntradas: %2\nComissões pagas: %3\nSaldo do período: %4")
+                                      .arg(relatorio.atendimentos)
+                                      .arg(dinheiro(relatorio.entradas), dinheiro(relatorio.totalComissoes), dinheiro(relatorio.saldo)));
+
+    // o Financeiro e const aqui, mas o par Begin()/End() precisa gravar o
+    // resultado no cache do body, entao a consulta usa a referencia mutavel
+    Financeiro& mutavel = const_cast<Financeiro&>(financeiro);
+
+    // Begin() e End() ficam em linhas separadas de proposito: passar os dois
+    // como argumentos da mesma chamada deixa a ordem de avaliacao por conta
+    // do compilador, e se End() rodar primeiro ele aponta para o cache
+    // antigo enquanto Begin() o realoca
+    auto primeira = mutavel.relatorioPorProfissionalBegin(inicio, fim);
+    auto ultima = mutavel.relatorioPorProfissionalEnd();
+    std::vector<RelatorioProfissional> linhas(primeira, ultima);
+
+    adminRelProfissionaisTable_->setRowCount(static_cast<int>(linhas.size()));
+    for (int row = 0; row < static_cast<int>(linhas.size()); ++row) {
+        const RelatorioProfissional& linha = linhas[static_cast<size_t>(row)];
+        adminRelProfissionaisTable_->setItem(row, 0, item(nomeProfissional(linha.profissionalId)));
+        adminRelProfissionaisTable_->setItem(row, 1, item(QString::number(linha.atendimentos)));
+        adminRelProfissionaisTable_->setItem(row, 2, item(dinheiro(linha.totalGerado)));
+        adminRelProfissionaisTable_->setItem(row, 3, item(dinheiro(linha.totalComissoes)));
+    }
 }
 
 // atualiza os cartoes de total/ativos e as tabelas de servicos e
@@ -742,6 +1087,12 @@ void MainWindow::atualizarResumoAdmin()
         adminClientesTable_->setItem(row, 1, item(QString::fromStdString(usuario->nome())));
         adminClientesTable_->setItem(row, 2, item(QString::fromStdString(usuario->email())));
         adminClientesTable_->setItem(row, 3, item(QString::fromStdString(toString(usuario->papel()))));
+
+        const QString preferido = usuario->profissionalPreferidoId().empty()
+            ? QString("-")
+            : nomeProfissional(usuario->profissionalPreferidoId());
+        adminClientesTable_->setItem(row, 4, item(preferido));
+        adminClientesTable_->setItem(row, 5, item(QString::fromStdString(usuario->observacoes())));
     }
 
     std::vector<Servico*> servicos(system_->servicosBegin(), system_->servicosEnd());
