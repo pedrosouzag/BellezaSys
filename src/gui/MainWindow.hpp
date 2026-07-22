@@ -1,11 +1,15 @@
 #pragma once
 
 #include "bellezasys/core/AgendaService.hpp"
+#include "bellezasys/core/ChatbotImpl.hpp"
 
 #include <QMainWindow>
 
+#include <memory>
 #include <string>
 #include <vector>
+
+class OllamaLlmClient;
 
 class QComboBox;
 class QDateEdit;
@@ -18,12 +22,13 @@ class QPushButton;
 class QSpinBox;
 class QStackedWidget;
 class QTableWidget;
+class QTextEdit;
 
 /// janela principal do BellezaSys. mostra tres telas dentro de um
 /// QStackedWidget: login, area do cliente e painel do administrador. toda
 /// a logica de negocio fica em bellezasys::AgendaService (system_); esta
 /// classe so monta a interface e traduz as acoes do usuario em chamadas
-/// pro core
+/// pro core.
 class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget* parent = nullptr);
@@ -63,11 +68,34 @@ private:
     void atualizarTabelaAdmin();
     void atualizarAgendaFiltradaAdmin();
     void atualizarFinanceiroAdmin();
+
+    /// gera o relatorio do periodo escolhido na aba Relatorios
+    void atualizarRelatorioAdmin();
     void atualizarResumoAdmin();
 
     void adminCadastrarCliente();
+
+    /// grava o profissional preferido e as observacoes do cliente escolhido
+    void adminSalvarPreferencias();
+
+    /// traz para o formulario as preferencias ja gravadas do cliente
+    /// selecionado no combo
+    void adminCarregarPreferencias();
     void adminCadastrarServico();
     void adminCadastrarProfissional();
+    /// monta o painel do assistente virtual dentro da tela do cliente
+    QWidget* criarPainelAssistente(QWidget* parent);
+
+    /// envia o que o cliente digitou pro Chatbot e mostra a resposta
+    void assistenteEnviarMensagem();
+
+    /// reescreve a conversa a partir do historico do Chatbot
+    void atualizarConversaAssistente();
+
+    /// atualiza o rotulo que diz se o assistente esta usando o modelo local
+    /// (Ollama) ou o modo palavras-chave
+    void atualizarStatusAssistente();
+
     void clienteCriarAgendamento();
     void clienteRemarcarSelecionado();
     void clienteCancelarSelecionado();
@@ -114,6 +142,15 @@ private:
     QTableWidget* clienteAgendamentosTable_ = nullptr;
     QLabel* clienteEtapaLabel_ = nullptr;
 
+    /// cliente do modelo local; fica nulo quando o Qt Network nao consegue
+    /// falar com o Ollama. o Chatbot funciona nos dois casos
+    std::unique_ptr<OllamaLlmClient> llm_;
+    std::unique_ptr<bellezasys::ChatbotHandle> chatbot_;
+    QTextEdit* assistenteConversa_ = nullptr;
+    QLineEdit* assistenteEntrada_ = nullptr;
+    QLabel* assistenteStatusLabel_ = nullptr;
+    QPushButton* assistenteEnviarButton_ = nullptr;
+
     QLabel* adminNomeLabel_ = nullptr;
     QLabel* adminTotalAgendamentosLabel_ = nullptr;
     QLabel* adminAtivosLabel_ = nullptr;
@@ -127,12 +164,19 @@ private:
     QDateEdit* adminFiltroDataInput_ = nullptr;
     QTableWidget* adminAgendamentosTable_ = nullptr;
     QTableWidget* adminAgendaFiltradaTable_ = nullptr;
+    QDateEdit* adminRelInicioInput_ = nullptr;
+    QDateEdit* adminRelFimInput_ = nullptr;
+    QLabel* adminRelResumoLabel_ = nullptr;
+    QTableWidget* adminRelProfissionaisTable_ = nullptr;
     QTableWidget* adminServicosTable_ = nullptr;
     QTableWidget* adminProfissionaisTable_ = nullptr;
     QTableWidget* adminClientesTable_ = nullptr;
     QLineEdit* adminClienteNomeInput_ = nullptr;
     QLineEdit* adminClienteEmailInput_ = nullptr;
     QLineEdit* adminClienteSenhaInput_ = nullptr;
+    QComboBox* adminPrefClienteCombo_ = nullptr;
+    QComboBox* adminPrefProfissionalCombo_ = nullptr;
+    QLineEdit* adminPrefObservacoesInput_ = nullptr;
     QLineEdit* adminServicoNomeInput_ = nullptr;
     QDoubleSpinBox* adminServicoPrecoInput_ = nullptr;
     QSpinBox* adminServicoDuracaoInput_ = nullptr;
