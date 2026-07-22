@@ -19,12 +19,44 @@ Sistema de automacao de agendamentos para saloes de beleza, com nucleo C++ separ
 
 - Cadastro e login de usuarios.
 - Cadastro de clientes, servicos e profissionais pela interface administrativa.
+- Preferencias do cliente: profissional preferido e observacoes.
 - Consulta de disponibilidade por servico, profissional, expediente e conflito de horario.
 - Agenda visual filtrada por profissional e data.
 - Agendamento, remarcacao, cancelamento e conclusao.
 - Registro financeiro com saldo de caixa e comissoes.
+- Relatorios por periodo, com quebra por profissional.
+- Controle de acesso por perfil (cliente, funcionario, administrador).
 - Persistencia simples em arquivo texto (`data/bellezasys.db`).
+- Assistente virtual (chatbot) com IA local opcional via Ollama.
 - Interface Qt para demonstrar o fluxo inicial ao cliente.
+
+## Assistente virtual (chatbot)
+
+O assistente fica na area do cliente e responde sobre servicos, precos,
+disponibilidade e agendamentos.
+
+O modelo de linguagem **nunca decide** se existe horario livre: ele so
+classifica a frase do cliente numa intencao e extrai parametros (servico,
+data, id). Quem responde e sempre o `BellezaSystem`, consultando expediente e
+conflito de horario reais. Isso impede que o modelo invente um horario.
+
+Funciona em dois modos:
+
+- **Com IA local**: fala com um servidor [Ollama](https://ollama.com) em
+  `http://localhost:11434`, entendendo linguagem livre.
+- **Sem IA** (padrao quando o Ollama nao esta rodando): interpretador por
+  palavra-chave. A interface avisa qual modo esta ativo.
+
+Para ligar a IA local:
+
+```bash
+ollama pull llama3.2:3b
+ollama serve
+```
+
+O nucleo (`bellezasys_core`) continua sem Qt e sem rede: `LlmClient` e uma
+interface abstrata, `OllamaLlmClient` (que usa Qt Network) vive em `src/gui`,
+e os testes unitarios usam `FakeLlmClient`, mantendo tudo deterministico.
 
 ## Testes (unitarios + funcionais, sem Qt)
 
@@ -33,7 +65,7 @@ make test
 ```
 
 Compila e roda `test/unit` (Unit_Usuario, Unit_Profissional, Unit_Servico,
-Unit_Agendamento, Unit_Financeiro, Unit_BellezaSystem) e `test/funcional`
+Unit_Agendamento, Unit_Financeiro, Unit_BellezaSystem, Unit_Chatbot) e `test/funcional`
 (cenarios de ponta a ponta), sem nenhuma dependencia de Qt.
 
 ## Compilar e rodar a interface Qt
