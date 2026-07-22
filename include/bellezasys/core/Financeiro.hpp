@@ -24,6 +24,28 @@ struct Comissao {
     std::string profissionalId;
     std::string agendamentoId;
     double valor = 0.0;
+
+    /// data do atendimento que gerou a comissao, usada para filtrar por periodo
+    DateTime data;
+};
+
+/// consolidado do caixa dentro de um intervalo de datas
+struct RelatorioFinanceiro {
+    DateTime inicio;
+    DateTime fim;
+    double entradas = 0.0;
+    double saidas = 0.0;
+    double saldo = 0.0;
+    double totalComissoes = 0.0;
+    int atendimentos = 0;
+};
+
+/// uma linha do relatorio por profissional dentro de um periodo
+struct RelatorioProfissional {
+    std::string profissionalId;
+    int atendimentos = 0;
+    double totalGerado = 0.0;
+    double totalComissoes = 0.0;
 };
 
 /// interface do controle financeiro do salao: registra pagamentos e
@@ -39,6 +61,17 @@ public:
     virtual double totalComissoes() const = 0;
     virtual const std::vector<MovimentoCaixa>& movimentos() const = 0;
     virtual const std::vector<Comissao>& comissoes() const = 0;
+
+    /// consolida entradas, saidas, saldo e comissoes do intervalo. o
+    /// intervalo e fechado nas duas pontas ([inicio, fim]) e usa a data do
+    /// atendimento, nao a data em que o pagamento foi digitado
+    virtual RelatorioFinanceiro relatorioPorPeriodo(DateTime inicio, DateTime fim) const = 0;
+
+    /// quebra o mesmo periodo por profissional, ordenado do que mais gerou
+    /// para o que menos gerou. Begin() recalcula a consulta, End() so
+    /// devolve o fim do resultado ja calculado (chame sempre Begin() antes)
+    virtual std::vector<RelatorioProfissional>::const_iterator relatorioPorProfissionalBegin(DateTime inicio, DateTime fim) = 0;
+    virtual std::vector<RelatorioProfissional>::const_iterator relatorioPorProfissionalEnd() = 0;
 
     virtual ~Financeiro() = default;
 };
