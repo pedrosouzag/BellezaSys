@@ -254,6 +254,10 @@ void BellezaSystemBody::add(Agendamento* agendamento)
 
 void BellezaSystemBody::limpar()
 {
+    // a sessao aponta para um dos usuarios que estao prestes a ser
+    // deletados, entao precisa cair antes de qualquer delete
+    usuarioDaSessao = nullptr;
+
     for (Usuario* usuario : usuarios) delete usuario;
     for (Servico* servico : servicos) delete servico;
     for (Profissional* profissional : profissionais) delete profissional;
@@ -357,6 +361,8 @@ void BellezaSystemHandle::add(Agendamento* agendamento) { pImpl_->add(agendament
 
 Usuario* BellezaSystemHandle::cadastrarUsuario(std::string id, std::string nome, std::string email, std::string senha, Papel papel)
 {
+    pImpl_->exigirPermissao(Permissao::GerenciarCadastros);
+
     for (Usuario* usuario : pImpl_->usuarios) {
         if (usuario->id() == id) {
             throw std::invalid_argument("Usuario ja cadastrado: " + id);
@@ -383,8 +389,105 @@ bool BellezaSystemHandle::login(const std::string& email, const std::string& sen
     return false;
 }
 
+// tabela de permissoes por papel, num lugar so
+bool BellezaSystemBody::papelPode(Papel papel, Permissao permissao)
+{
+    switch (papel) {
+    case Papel::Administrador:
+        // o administrador nao tem restricao
+        return true;
+    case Papel::Funcionario:
+        // atende e cuida da agenda, mas nao mexe no catalogo do salao
+        return permissao != Permissao::GerenciarCadastros;
+    case Papel::Cliente:
+        // cliente age apenas sobre os proprios dados, o que e tratado por
+        // exigirPermissaoOuDono; nenhuma permissao de terceiros vale aqui
+        return false;
+    }
+    return false;
+}
+
+void BellezaSystemBody::exigirPermissao(Permissao permissao) const
+{
+    // sem sessao o sistema roda em modo interno (bootstrap, carga de
+    // arquivo, testes); ver o comentario em BellezaSystem::temPermissao
+    if (usuarioDaSessao == nullptr) {
+        return;
+    }
+    if (papelPode(usuarioDaSessao->papel(), permissao)) {
+        return;
+    }
+    throw std::logic_error("O perfil " + toString(usuarioDaSessao->papel())
+        + " nao pode " + toString(permissao) + ".");
+}
+
+void BellezaSystemBody::exigirPermissaoOuDono(Permissao permissao, const std::string& donoId) const
+{
+    if (usuarioDaSessao == nullptr) {
+        return;
+    }
+    // agir sobre o proprio dado sempre vale, seja qual for o papel
+    if (usuarioDaSessao->id() == donoId) {
+        return;
+    }
+    exigirPermissao(permissao);
+}
+
+Usuario* BellezaSystemHandle::iniciarSessao(const std::string& email, const std::string& senha)
+{
+    for (Usuario* usuario : pImpl_->usuarios) {
+        if (usuario->email() != email) {
+            continue;
+        }
+        if (!usuario->autenticar(senha)) {
+            throw std::invalid_argument("Senha incorreta.");
+        }
+        pImpl_->usuarioDaSessao = usuario;
+        return usuario;
+    }
+    throw std::invalid_argument("Usuario nao encontrado: " + email);
+}
+
+void BellezaSystemHandle::encerrarSessao() { pImpl_->usuarioDaSessao = nullptr; }
+
+Usuario* BellezaSystemHandle::usuarioDaSessao() const { return pImpl_->usuarioDaSessao; }
+
+bool BellezaSystemHandle::temPermissao(Permissao permissao) const
+{
+    if (pImpl_->usuarioDaSessao == nullptr) {
+        return true;
+    }
+    return BellezaSystemBody::papelPode(pImpl_->usuarioDaSessao->papel(), permissao);
+}
+
+Usuario* BellezaSystemHandle::definirPreferencias(const std::string& clienteId, const std::string& profissionalPreferidoId, const std::string& observacoes)
+{
+    // o proprio cliente pode ajustar suas preferencias; mexer nas de outra
+    // pessoa exige perfil de funcionario ou administrador
+    pImpl_->exigirPermissaoOuDono(Permissao::GerenciarClientes, clienteId);
+
+    Usuario* usuario = pImpl_->usuarioObrigatorio(clienteId);
+
+    // preferencia so faz sentido para quem e atendido no salao
+    if (usuario->papel() != Papel::Cliente) {
+        throw std::invalid_argument("So um cliente pode ter preferencias: " + clienteId);
+    }
+
+    // id vazio significa "sem preferencia"; qualquer outro valor precisa
+    // apontar para um profissional que existe de verdade
+    if (!profissionalPreferidoId.empty()) {
+        pImpl_->profissionalObrigatorio(profissionalPreferidoId);
+    }
+
+    usuario->setProfissionalPreferidoId(profissionalPreferidoId);
+    usuario->setObservacoes(observacoes);
+    return usuario;
+}
+
 Servico* BellezaSystemHandle::cadastrarServico(std::string id, std::string nome, double preco, std::chrono::minutes duracao, double percentualComissao)
 {
+    pImpl_->exigirPermissao(Permissao::GerenciarCadastros);
+
     for (Servico* servico : pImpl_->servicos) {
         if (servico->id() == id) {
             throw std::invalid_argument("Servico ja cadastrado: " + id);
@@ -398,6 +501,8 @@ Servico* BellezaSystemHandle::cadastrarServico(std::string id, std::string nome,
 
 Profissional* BellezaSystemHandle::cadastrarProfissional(std::string id, std::string nome, std::string email, std::vector<std::string> servicosAtendidos, int expedienteInicioHora, int expedienteFimHora)
 {
+    pImpl_->exigirPermissao(Permissao::GerenciarCadastros);
+
     for (Profissional* profissional : pImpl_->profissionais) {
         if (profissional->id() == id) {
             throw std::invalid_argument("Profissional ja cadastrado: " + id);
@@ -415,6 +520,10 @@ Profissional* BellezaSystemHandle::cadastrarProfissional(std::string id, std::st
 
 Agendamento* BellezaSystemHandle::agendar(const std::string& clienteId, const std::string& profissionalId, const std::string& servicoId, DateTime inicio)
 {
+    // cliente marca para si mesmo; marcar para outra pessoa exige perfil
+    // de funcionario ou administrador
+    pImpl_->exigirPermissaoOuDono(Permissao::AgendarParaTerceiros, clienteId);
+
     Usuario* cliente = pImpl_->usuarioObrigatorio(clienteId);
     Servico* servico = pImpl_->servicoObrigatorio(servicoId);
     pImpl_->profissionalObrigatorio(profissionalId);
@@ -437,6 +546,7 @@ Agendamento* BellezaSystemHandle::agendar(const std::string& clienteId, const st
 Agendamento* BellezaSystemHandle::remarcarAgendamento(const std::string& agendamentoId, DateTime novoInicio)
 {
     Agendamento* agendamento = pImpl_->agendamentoObrigatorio(agendamentoId);
+    pImpl_->exigirPermissaoOuDono(Permissao::AgendarParaTerceiros, agendamento->clienteId());
     pImpl_->servicoObrigatorio(agendamento->servicoId());
     pImpl_->profissionalObrigatorio(agendamento->profissionalId());
 
@@ -451,12 +561,16 @@ Agendamento* BellezaSystemHandle::remarcarAgendamento(const std::string& agendam
 Agendamento* BellezaSystemHandle::cancelarAgendamento(const std::string& agendamentoId)
 {
     Agendamento* agendamento = pImpl_->agendamentoObrigatorio(agendamentoId);
+    pImpl_->exigirPermissaoOuDono(Permissao::AgendarParaTerceiros, agendamento->clienteId());
     agendamento->cancelar();
     return agendamento;
 }
 
 Agendamento* BellezaSystemHandle::concluirAgendamento(const std::string& agendamentoId)
 {
+    // concluir gera dinheiro no caixa, entao o cliente nao faz isso sozinho
+    pImpl_->exigirPermissao(Permissao::ConcluirAtendimento);
+
     Agendamento* agendamento = pImpl_->agendamentoObrigatorio(agendamentoId);
     agendamento->concluir();
     // ao concluir, registra o pagamento no financeiro (caixa + comissao)
@@ -465,7 +579,7 @@ Agendamento* BellezaSystemHandle::concluirAgendamento(const std::string& agendam
     return agendamento;
 }
 
-// recalcula a lista dos profissionais disponiveis e guarda no cache do
+// recalcula a lista de profissionais disponiveis e guarda no cache do
 // body; o iterator retornado (e o de profissionaisDisponiveisEnd())
 // aponta pra esse cache
 std::vector<Profissional*>::iterator BellezaSystemHandle::profissionaisDisponiveisBegin(const std::string& servicoId, DateTime inicio)
@@ -562,6 +676,8 @@ std::vector<Agendamento*>::iterator BellezaSystemHandle::agendamentosEnd() { ret
 
 const Financeiro& BellezaSystemHandle::financeiro() const
 {
+    // caixa, comissoes e relatorios nao sao do cliente
+    pImpl_->exigirPermissao(Permissao::VerFinanceiro);
     return pImpl_->financeiro;
 }
 
@@ -603,6 +719,19 @@ void BellezaSystemHandle::salvarEmArquivo(const std::string& caminho) const
                 << profissional->expedienteInicioHora() << "\t"
                 << profissional->expedienteFimHora() << "\n";
     }
+    // as preferencias vao em linha propria, depois dos profissionais (que
+    // elas referenciam) e so para quem tem algo preenchido. isso mantem a
+    // linha USUARIO com os mesmos 6 campos, entao arquivos gravados antes
+    // desta versao continuam carregando sem conversao
+    for (Usuario* usuario : pImpl_->usuarios) {
+        if (usuario->profissionalPreferidoId().empty() && usuario->observacoes().empty()) {
+            continue;
+        }
+        arquivo << "PREFERENCIA\t"
+                << escaparCampo(usuario->id()) << "\t"
+                << escaparCampo(usuario->profissionalPreferidoId()) << "\t"
+                << escaparCampo(usuario->observacoes()) << "\n";
+    }
     for (Agendamento* agendamento : pImpl_->agendamentos) {
         arquivo << "AGENDAMENTO\t"
                 << escaparCampo(agendamento->id()) << "\t"
@@ -621,6 +750,10 @@ void BellezaSystemHandle::carregarDeArquivo(const std::string& caminho)
         throw std::runtime_error("Nao foi possivel abrir arquivo para carregar: " + caminho);
     }
 
+    // a base inteira vai ser trocada, entao a sessao atual deixa de valer.
+    // isso tambem devolve o sistema ao modo interno, sem o qual a carga
+    // esbarraria nas proprias regras de permissao
+    encerrarSessao();
     pImpl_->limpar();
 
     std::string linha;
@@ -657,6 +790,11 @@ void BellezaSystemHandle::carregarDeArquivo(const std::string& caminho)
                 throw std::runtime_error("Linha de profissional invalida.");
             }
             cadastrarProfissional(campos[1], campos[2], campos[3], separarServicos(campos[4]), std::stoi(campos[5]), std::stoi(campos[6]));
+        } else if (campos[0] == "PREFERENCIA") {
+            if (campos.size() != 4) {
+                throw std::runtime_error("Linha de preferencia invalida.");
+            }
+            definirPreferencias(campos[1], campos[2], campos[3]);
         } else if (campos[0] == "AGENDAMENTO") {
             if (campos.size() != 7) {
                 throw std::runtime_error("Linha de agendamento invalida.");

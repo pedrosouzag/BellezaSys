@@ -46,6 +46,21 @@ public:
     FinanceiroHandle financeiro;
     int proximoAgendamento = 1;
 
+    /// quem esta logado; nullptr significa "sem sessao", e nesse modo o
+    /// controle de acesso nao e aplicado (ver BellezaSystem::temPermissao)
+    Usuario* usuarioDaSessao = nullptr;
+
+    /// true quando o papel informado pode executar a acao
+    static bool papelPode(Papel papel, Permissao permissao);
+
+    /// lanca std::logic_error quando ha sessao aberta e o papel dela nao
+    /// tem a permissao pedida
+    void exigirPermissao(Permissao permissao) const;
+
+    /// permite a acao quando o usuario da sessao e o proprio dono do dado,
+    /// ou quando ele tem a permissao que cobre agir sobre terceiros
+    void exigirPermissaoOuDono(Permissao permissao, const std::string& donoId) const;
+
     /// resultados das ultimas consultas filtradas, usados pelos pares
     /// Begin()/End() do Handle (ver comentario na interface BellezaSystem)
     std::vector<Profissional*> profissionaisDisponiveisCache;
@@ -61,7 +76,7 @@ public:
     friend class Unit_BellezaSystem;
 };
 
-/// classe Handle que implementa a interface BellezaSystem, delegando 
+/// classe Handle que implementa a interface BellezaSystem, delegando os
 /// dados reais para um BellezaSystemBody (pImpl_)
 class BellezaSystemHandle : public BellezaSystem, public Handle<BellezaSystemBody> {
 
@@ -76,6 +91,11 @@ public:
 
     Usuario* cadastrarUsuario(std::string id, std::string nome, std::string email, std::string senha, Papel papel) override;
     bool login(const std::string& email, const std::string& senha) const override;
+    Usuario* iniciarSessao(const std::string& email, const std::string& senha) override;
+    void encerrarSessao() override;
+    Usuario* usuarioDaSessao() const override;
+    bool temPermissao(Permissao permissao) const override;
+    Usuario* definirPreferencias(const std::string& clienteId, const std::string& profissionalPreferidoId, const std::string& observacoes) override;
 
     Servico* cadastrarServico(std::string id, std::string nome, double preco, std::chrono::minutes duracao, double percentualComissao) override;
 

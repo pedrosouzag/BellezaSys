@@ -21,6 +21,24 @@ std::string toString(Papel papel)
     return "Desconhecido";
 }
 
+// converte a permissao para um texto legivel, usado nas mensagens de erro
+std::string toString(Permissao permissao)
+{
+    switch (permissao) {
+    case Permissao::GerenciarCadastros:
+        return "gerenciar cadastros";
+    case Permissao::GerenciarClientes:
+        return "gerenciar clientes";
+    case Permissao::AgendarParaTerceiros:
+        return "agendar para outra pessoa";
+    case Permissao::ConcluirAtendimento:
+        return "concluir atendimento";
+    case Permissao::VerFinanceiro:
+        return "ver o financeiro";
+    }
+    return "acao desconhecida";
+}
+
 // converte o status do agendamento para um texto legivel
 std::string toString(StatusAgendamento status)
 {

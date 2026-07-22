@@ -22,6 +22,10 @@ public:
     std::string senha;
     Papel papel = Papel::Cliente;
 
+    // preferencias do cliente; ficam vazias para funcionario e administrador
+    std::string profissionalPreferidoId;
+    std::string observacoes;
+
     friend class Unit_Usuario;
 };
 
@@ -40,6 +44,11 @@ public:
 
     void setNome(const std::string& nome) override;
     void setEmail(const std::string& email) override;
+
+    const std::string& profissionalPreferidoId() const override;
+    const std::string& observacoes() const override;
+    void setProfissionalPreferidoId(const std::string& profissionalId) override;
+    void setObservacoes(const std::string& observacoes) override;
     bool autenticar(const std::string& senha) const override;
     void alterarSenha(const std::string& senhaAtual, const std::string& novaSenha) override;
 
